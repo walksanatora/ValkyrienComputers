@@ -4,44 +4,44 @@ issueTrackerURL = "https://github.com/ValkyrienSkies/Valkyrien-Skies-2/issues"
 license = "Apache-2.0"
 
 [[mods]]
-modId = "vs_eureka"
+modId = "vc"
 version = "${version}"
-displayName = "VS Eureka Mod"
-authors = ["Tri0de", "ewoudje", "VS2 Discord Artists"]
+displayName = "Valkyrien Computers"
+authors = ["TechTastic"]
 description = '''
-Basically Archimedes Ships, but with VS2 as the backend!
+Computer-based Mod Integration with Valkyrien Skies addons
 '''
 logoFile = "icon.png"
 
-[[dependencies.vs_eureka]]
+[[dependencies.vc]]
 modId = "forge"
 mandatory = false
 versionRange = "[36,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.vs_eureka]]
+[[dependencies.vc]]
 modId = "valkyrienskies"
 mandatory = false
 versionRange = "[1,)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.vs_eureka]]
+[[dependencies.vc]]
 modId = "minecraft"
 mandatory = false
 versionRange = "[1.16.5,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.vs_eureka]]
+[[dependencies.vc]]
 modId = "minecraft"
 mandatory = false
 versionRange = "[1.16.5,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.vs_eureka]]
+[[dependencies.vc]]
 modId = "architectury"
 mandatory = false
 versionRange = "[1.31.61,)"

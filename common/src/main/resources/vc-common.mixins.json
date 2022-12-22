@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "net.techtastic.vc.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "client.PlayerEntityModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

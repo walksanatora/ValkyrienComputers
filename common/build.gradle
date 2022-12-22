@@ -3,7 +3,18 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/vs_eureka.accesswidener")
+    accessWidenerPath = file("src/main/resources/vc.accesswidener")
+}
+
+repositories {
+    // CC Restitched
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven { url "https://maven.shedaniel.me/" }
 }
 
 dependencies {
@@ -16,12 +27,18 @@ dependencies {
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
     api "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+
+    // CC Restitched
+    modCompileOnly("curse.maven:cc-restitched-462672:3622561")
+
+    // Eureka
+    modCompileOnly("curse.maven:eureka-654384:4134995")
 }
 
 publishing {
     publications {
         mavenCommon(MavenPublication) {
-            groupId = "org.valkyrienskies.eureka"
+            groupId = "net.techtastic.vc"
             version = project.version
             artifactId = rootProject.archives_base_name + "-" + project.name
             from components.java

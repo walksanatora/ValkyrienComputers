@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: true # Clone with vs-core submodule
+          submodules: true # Clone with vc-core submodule
       - uses: gradle/wrapper-validation-action@v1
 
   build:
