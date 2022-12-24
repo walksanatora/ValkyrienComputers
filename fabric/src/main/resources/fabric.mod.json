@@ -21,10 +21,10 @@
       "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
     ],
     "client": [
-      "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
+      "net.techtastic.vc.fabric.ValkyrienComputersClientModFabric"
     ],
     "modmenu": [
-      "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
+      "net.techtastic.vc.fabric.ValkyrienComputersModMenuFabric"
     ]
   },
   "mixins": [

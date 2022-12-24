@@ -3,6 +3,7 @@ package net.techtastic.vc.forge;
 import me.shedaniel.architectury.platform.forge.EventBuses;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -10,15 +11,19 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
+import net.techtastic.vc.forge.integrations.cc.ValkyrienComputersComputerCraftCreativeTab;
+import net.techtastic.vc.forge.integrations.cc.eureka.EurekaPeripheralProviders;
+import net.techtastic.vc.forge.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
 import org.valkyrienskies.core.config.VSConfigClass;
 import net.techtastic.vc.ValkyrienComputersConfig;
 import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT;
 import net.techtastic.vc.ValkyrienComputersConfig.Server.OPENCOMPUTERS;
 import net.techtastic.vc.ValkyrienComputersMod;
-import net.techtastic.vc.forge.integrations.eureka.EurekaPeripheralProviders;
 import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig;
 
-@Mod(ValkyrienComputersMod.MOD_ID)
+@Mod(
+        ValkyrienComputersMod.MOD_ID
+)
 public class ValkyrienComputersModForge {
     boolean happendClientSetup = false;
 
@@ -26,7 +31,8 @@ public class ValkyrienComputersModForge {
         // Submit our event bus to let architectury register our content on the right time
 
         EventBuses.registerModEventBus(ValkyrienComputersMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::clientSetup);
 
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
                 () -> (Minecraft client, Screen parent) ->
@@ -34,14 +40,23 @@ public class ValkyrienComputersModForge {
                                 VSConfigClass.Companion.getRegisteredConfig(ValkyrienComputersConfig.class))
         );
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        eventBus.addListener(this::clientSetup);
 
-        ValkyrienComputersMod.init();
+        Object[] tabs = new Object[] {null};
 
         LoadingModList mods = FMLLoader.getLoadingModList();
+        if (mods.getModFileById("computercraft") != null) {
+            tabs[0] = ValkyrienComputersComputerCraftCreativeTab.getComputerCraftTab();
+        }
+
+        ValkyrienComputersMod.init(tabs);
+
         COMPUTERCRAFT CC_Config = ValkyrienComputersConfig.SERVER.getComputerCraft();
         if (mods.getModFileById("computercraft") != null && !CC_Config.getDisableComputerCraft()) {
             // ComputerCraft is loaded and Integration is not disabled in the config
+
+            ValkyrienComputersPeripheralProviders.registerPeripheralProviders();
+
             if (mods.getModFileById("vs_eureka") != null) {
                 // Eureka is loaded
                 EurekaPeripheralProviders.registerPeripheralProviders();
@@ -51,7 +66,7 @@ public class ValkyrienComputersModForge {
         OPENCOMPUTERS OC_Config = ValkyrienComputersConfig.SERVER.getOpenComputers();
         if (mods.getModFileById("opencomputers") != null && !OC_Config.getDisableOpenComputers()) {
             // ComputerCraft is loaded and Integration is not disabled in the config
-            if (mods.getModFileById("vs_eureka") != null) {
+            if (mods.getModFileById("vs_eureka") != null && !CC_Config.getDisableEureka()) {
                 // Eureka is loaded
             }
         }

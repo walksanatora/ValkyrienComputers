@@ -1,7 +1,6 @@
-package net.techtastic.vc.fabric.integrations.eureka.cc;
+package net.techtastic.vc.forge.integrations.cc.eureka;
 
 import dan200.computercraft.api.ComputerCraftAPI;
-import net.techtastic.vc.integrations.eureka.cc.ShipHelmPeripheralProvider;
 
 public class EurekaPeripheralProviders {
     public static void registerPeripheralProviders() {

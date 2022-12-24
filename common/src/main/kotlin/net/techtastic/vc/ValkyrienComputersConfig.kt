@@ -19,6 +19,9 @@ object ValkyrienComputersConfig {
             @JsonSchema(description = "Disable ComputerCraft Integration")
             val disableComputerCraft = false;
 
+            @JsonSchema(description = "Disable Eureka Integration")
+            val disableEureka = false;
+
             @JsonSchema(description = "Disable Radars")
             val disableRadars = false
 
@@ -34,6 +37,18 @@ object ValkyrienComputersConfig {
         class OPENCOMPUTERS {
             @JsonSchema(description = "Disabled OpenComputers Integration")
             val disableOpenComputers = false;
+
+            @JsonSchema(description = "Disable Eureka Integration")
+            val disableEureka = false;
+
+            @JsonSchema(description = "Disable Radars")
+            val disableRadars = false
+
+            @JsonSchema(description = "Disable Ship Readers")
+            val disableShipReaders = false
+
+            @JsonSchema(description = "Maximum Range of Radars")
+            val maxRadarRadius = 256
         }
     }
 }

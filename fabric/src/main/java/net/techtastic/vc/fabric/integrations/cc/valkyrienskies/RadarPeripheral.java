@@ -1,4 +1,4 @@
-package net.techtastic.vc.fabric.integrations.valkyrienskies.cc;
+package net.techtastic.vc.fabric.integrations.cc.valkyrienskies;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.techtastic.vc.ValkyrienComputersConfig;
-import net.techtastic.vc.fabric.ValkyrienComputersBlocksCC;
+import net.techtastic.vc.ValkyrienComputersBlocksCC;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
@@ -41,7 +41,7 @@ public class RadarPeripheral implements IPeripheral {
 
 	@Override
 	public boolean equals(@Nullable IPeripheral iPeripheral) {
-		return iPeripheral.getType().equals("radar");
+		return level.getBlockState(pos).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get());
 	}
 
 	public Object[] scanForShips(Level level, BlockPos position, double radius) {
@@ -55,11 +55,6 @@ public class RadarPeripheral implements IPeripheral {
 			// THROW EARLY RESULTS
 			Object[] earlyResult = new Object[1];
 
-			if (ValkyrienComputersConfig.SERVER.getComputerCraft().getDisableRadars()) {
-				earlyResult[0] = "disabled";
-				return earlyResult;
-			}
-
 			if (radius < 1.0) {
 				earlyResult[0] = "radius too small";
 				return earlyResult;
@@ -68,16 +63,16 @@ public class RadarPeripheral implements IPeripheral {
 				return earlyResult;
 			}
 
+			if (!level.getBlockState(position).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get())) {
+				earlyResult[0] = "no radar";
+				return earlyResult;
+			}
+
 			// IF RADAR IS ON A SHIP, USE THE WORLD SPACE COORDINATES
 			Ship test = VSGameUtilsKt.getShipManagingPos(level, position);
 			if (test != null) {
 				Vector3d newPos = VSGameUtilsKt.toWorldCoordinates(test, position);
 				position = new BlockPos(newPos.x, newPos.y, newPos.z);
-			}
-
-			if (!level.getBlockState(position).getBlock().is(ValkyrienComputersBlocksCC.RADAR)) {
-				earlyResult[0] = "no radar";
-				return earlyResult;
 			}
 
 			// GET A LIST OF SHIP POSITIONS WITHIN RADIUS

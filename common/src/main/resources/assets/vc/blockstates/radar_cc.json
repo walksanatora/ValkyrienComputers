@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "vc:block/radar_cc"
+    }
+  }
+}

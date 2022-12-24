@@ -59,6 +59,9 @@ dependencies {
 
     // CC Tweaked
     modCompileOnly("curse.maven:cctweaked-282001:4061944")
+
+    // Eureka
+    modCompileOnly("curse.maven:eureka-654384:4134995")
 }
 
 processResources {

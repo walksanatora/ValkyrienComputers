@@ -1,4 +1,4 @@
-package net.techtastic.vc.integrations.eureka.cc;
+package net.techtastic.vc.forge.integrations.cc.eureka;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -10,16 +10,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniondc;
-import org.joml.Vector3dc;
 import org.valkyrienskies.core.game.ships.ShipData;
 import org.valkyrienskies.eureka.block.ShipHelmBlock;
 import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity;
 import org.valkyrienskies.eureka.ship.EurekaShipControl;
 import org.valkyrienskies.mod.api.SeatedControllingPlayer;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-
-import java.util.Set;
 
 public class ShipHelmPeripheral implements IPeripheral {
     private Level world;
@@ -45,33 +41,33 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean forward() throws LuaException {
-        return applyThrust("forward");
+    public final boolean impulseForward(int ticks) throws LuaException {
+        return applyThrust("forward", ticks);
     }
 
     @LuaFunction
-    public final boolean turnLeft() throws LuaException {
-        return applyThrust("left");
+    public final boolean impulseLeft(int ticks) throws LuaException {
+        return applyThrust("left", ticks);
     }
 
     @LuaFunction
-    public final boolean turnRight() throws LuaException {
-        return applyThrust("right");
+    public final boolean impulseRight(int ticks) throws LuaException {
+        return applyThrust("right", ticks);
     }
 
     @LuaFunction
-    public final boolean reverse() throws LuaException {
-        return applyThrust("back");
+    public final boolean impulseBack(int ticks) throws LuaException {
+        return applyThrust("back", ticks);
     }
 
     @LuaFunction
-    public final boolean raise() throws LuaException {
-        return applyThrust("up");
+    public final boolean impulseUp(int ticks) throws LuaException {
+        return applyThrust("up", ticks);
     }
 
     @LuaFunction
-    public final boolean lower() throws LuaException {
-        return applyThrust("down");
+    public final boolean impulseDown(int ticks) throws LuaException {
+        return applyThrust("down", ticks);
     }
 
     @LuaFunction
@@ -312,107 +308,7 @@ public class ShipHelmPeripheral implements IPeripheral {
         }
     }
 
-    @LuaFunction
-    public final String getShipName() throws LuaException {
-        if (world.isClientSide()) return "";
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            return ship.getName();
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final boolean setShipName(String string) throws LuaException {
-        if (world.isClientSide()) return false;
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            ship.setName(string);
-            return true;
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final long getShipID() throws LuaException {
-        if (world.isClientSide()) return 0;
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            return ship.getId();
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final double getMass() throws LuaException {
-        if (world.isClientSide()) return 0.0;
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            return ship.getInertiaData().getShipMass();
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final Object[] getVelocity() throws LuaException {
-        if (world.isClientSide()) return new Object[0];
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            Vector3dc vel =ship.getVelocity();
-            return new Object[] { vel.x(), vel.y(), vel.z() };
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final Object[] getPosition() throws LuaException {
-        if (world.isClientSide()) return new Object[0];
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            Vector3dc vec = ship.getShipTransform().getShipPositionInWorldCoordinates();
-            return new Object[] { vec.x(), vec.y(), vec.z() };
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final Object[] getScale() throws LuaException {
-        if (world.isClientSide()) return new Object[0];
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            Vector3dc scale = ship.getShipTransform().getShipCoordinatesToWorldCoordinatesScaling();
-            return new Object[] { scale.x(), scale.y(), scale.z() };
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-
-    @LuaFunction
-    public final Object[] getRotation() throws LuaException {
-        if (world.isClientSide()) return new Object[0];
-
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            Quaterniondc rot = ship.getShipTransform().getShipCoordinatesToWorldCoordinatesRotation();
-            return new Object[] { rot.x(), rot.y(), rot.z() , rot.w() };
-        } else {
-            throw new LuaException("Not on a Ship");
-        }
-    }
-    public boolean applyThrust(String direction) throws LuaException {
+    public boolean applyThrust(String direction, int gameTicks) throws LuaException {
         if (world.isClientSide()) return false;
 
         ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
@@ -422,11 +318,12 @@ public class ShipHelmPeripheral implements IPeripheral {
                 SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
                 if (fakePlayer == null) { //Is there a SeatedControllingPlayer already?
                     fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
+                    ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                 }
 
                 long originTime = world.getGameTime();
                 int ticks = 0;
-                while (ticks < 20) { //Loop for 20 Game Ticks
+                while (ticks < gameTicks) {
                     //If one tick of time has passed, set originTime to current and increment ticks
                     if (world.getGameTime() - originTime == 1) {
                         originTime = world.getGameTime();
@@ -436,47 +333,42 @@ public class ShipHelmPeripheral implements IPeripheral {
                     switch (direction) {
                         case "forward": //Move Ship Forward
                             fakePlayer.setForwardImpulse(1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                         case "left": //Turn Ship Left
                             fakePlayer.setLeftImpulse(1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                         case "right": //Turn Ship Right
                             fakePlayer.setLeftImpulse(-1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                         case "back": //Move Ship Backward
                             fakePlayer.setForwardImpulse(-1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                         case "up": //Move Ship Upward
                             fakePlayer.setUpImpulse(1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                         default: //Move Ship Downward
                             fakePlayer.setUpImpulse(-1.0f);
-                            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                             break;
                     }
+
+                    ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                 }
 
                 switch (direction) {
                     case "forward":
                     case "back": //Reset Forward/Backward Impulse
                         fakePlayer.setForwardImpulse(0.0f);
-                        ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                         break;
                     case "left":
                     case "right": //Reset Left/Right Impulse
                         fakePlayer.setLeftImpulse(0.0f);
-                        ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                         break;
                     default: //Reset Up/Down Impulse
                         fakePlayer.setUpImpulse(0.0f);
-                        ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
                         break;
                 }
+
+                ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
 
                 return true;
             } else {

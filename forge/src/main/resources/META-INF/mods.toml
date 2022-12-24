@@ -21,6 +21,13 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.vc]]
+modId = "computercraft"
+mandatory = false
+versionRange = "[1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.vc]]
 modId = "valkyrienskies"
 mandatory = false
 versionRange = "[1,)"
