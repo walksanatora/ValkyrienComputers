@@ -1,9 +1,11 @@
 {
   "required": true,
-  "package": "org.valkyrienskies.eureka.forge.mixin",
+  "package": "net.techtastic.vc.forge.mixin",
   "compatibilityLevel": "JAVA_8",
   "plugin": "net.techtastic.vc.forge.mixin.ValkyrienForgeMixinConfigPlugin",
-  "mixins": [],
+  "mixins": [
+    "computercraft.MixinRegistryComputerCraft"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1
