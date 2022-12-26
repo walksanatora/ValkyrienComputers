@@ -3,13 +3,18 @@ package net.techtastic.vc;
 import dan200.computercraft.shared.ComputerCraftRegistry;
 import dan200.computercraft.shared.media.items.ItemDisk;
 import dan200.computercraft.shared.util.CreativeTabMain;
+import me.shedaniel.architectury.registry.CreativeTabs;
 import me.shedaniel.architectury.registry.DeferredRegister;
 import me.shedaniel.architectury.registry.RegistrySupplier;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
@@ -22,25 +27,30 @@ public class ValkyrienComputersBlocksCC {
     public static RegistrySupplier<Block> RADAR;
     public static RegistrySupplier<Block> READER;
 
-    public static RegistrySupplier<Block> registerBlock(String name, Block block, CreativeModeTab tab) {
-        registerBlockItem(name, block, tab);
+    public static RegistrySupplier<Block> registerBlock(String name, Block block) {
         return BLOCKS.register(name, () -> block);
     }
 
-    public static void registerBlockItem(String name, Block block, CreativeModeTab tab) {
-        ITEMS.register(name, () -> new BlockItem(block, new Item.Properties().tab(tab)));
+    public static void registerBlockItem(String name, RegistrySupplier<Block> block, CreativeModeTab tab) {
+        ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().tab(tab)));
     }
 
-    public static void registerCCBlocks(CreativeModeTab tab) {
-        BLOCKS.register();
-        ITEMS.register();
-
+    public static void registerCCBlocks() {
         ValkyrienComputersConfig.Server.COMPUTERCRAFT config = ValkyrienComputersConfig.SERVER.getComputerCraft();
         if (!config.getDisableRadars()) {
-            RADAR = registerBlock("radar_cc", new Block(BlockBehaviour.Properties.of(Material.METAL)), tab);
+            RADAR = registerBlock("radar_cc", new Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
         }
         if (!config.getDisableShipReaders()) {
-            READER = registerBlock("reader_cc", new Block(BlockBehaviour.Properties.of(Material.METAL)), tab);
+            READER = registerBlock("reader_cc", new Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
         }
+
+        BLOCKS.register();
+
+        CreativeModeTab tab = ValkyrienComputersTab.tab;
+
+        registerBlockItem("radar_cc", RADAR, tab);
+        registerBlockItem("reader_cc", READER, tab);
+
+        ITEMS.register();
     }
 }

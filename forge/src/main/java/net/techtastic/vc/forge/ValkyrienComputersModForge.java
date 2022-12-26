@@ -11,7 +11,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
-import net.techtastic.vc.forge.integrations.cc.ValkyrienComputersComputerCraftCreativeTab;
 import net.techtastic.vc.forge.integrations.cc.eureka.EurekaPeripheralProviders;
 import net.techtastic.vc.forge.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
 import org.valkyrienskies.core.config.VSConfigClass;
@@ -42,15 +41,9 @@ public class ValkyrienComputersModForge {
 
         eventBus.addListener(this::clientSetup);
 
-        Object[] tabs = new Object[] {null};
+        ValkyrienComputersMod.init();
 
         LoadingModList mods = FMLLoader.getLoadingModList();
-        if (mods.getModFileById("computercraft") != null) {
-            tabs[0] = ValkyrienComputersComputerCraftCreativeTab.getComputerCraftTab();
-        }
-
-        ValkyrienComputersMod.init(tabs);
-
         COMPUTERCRAFT CC_Config = ValkyrienComputersConfig.SERVER.getComputerCraft();
         if (mods.getModFileById("computercraft") != null && !CC_Config.getDisableComputerCraft()) {
             // ComputerCraft is loaded and Integration is not disabled in the config

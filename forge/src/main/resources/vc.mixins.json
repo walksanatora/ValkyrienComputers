@@ -3,9 +3,7 @@
   "package": "net.techtastic.vc.forge.mixin",
   "compatibilityLevel": "JAVA_8",
   "plugin": "net.techtastic.vc.forge.mixin.ValkyrienForgeMixinConfigPlugin",
-  "mixins": [
-    "computercraft.MixinRegistryComputerCraft"
-  ],
+  "mixins": [],
   "client": [],
   "injectors": {
     "defaultRequire": 1

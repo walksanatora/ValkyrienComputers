@@ -1,6 +1,7 @@
 package net.techtastic.vc
 
 import me.shedaniel.architectury.event.events.TickEvent
+import me.shedaniel.architectury.platform.Platform
 import net.minecraft.world.item.CreativeModeTab
 import org.valkyrienskies.core.config.VSConfigClass
 
@@ -11,11 +12,14 @@ object ValkyrienComputersMod {
     private var isTick1 = false
 
     @JvmStatic
-    fun init(tabs : Array<Any>) {
+    fun init() {
         VSConfigClass.registerConfig("vc", ValkyrienComputersConfig::class.java)
 
-        if (tabs[0] is CreativeModeTab) {
-            ValkyrienComputersBlocksCC.registerCCBlocks(tabs[0] as CreativeModeTab?)
+        ValkyrienComputersTab.registerTab()
+
+        val config = ValkyrienComputersConfig.SERVER.ComputerCraft
+        if (Platform.isModLoaded("computercraft") && !config.disableComputerCraft) {
+            ValkyrienComputersBlocksCC.registerCCBlocks()
         }
 
         TickEvent.SERVER_POST.register {
