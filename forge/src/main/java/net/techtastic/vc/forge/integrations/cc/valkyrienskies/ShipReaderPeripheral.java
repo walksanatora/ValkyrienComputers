@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.techtastic.vc.ValkyrienComputersBlocksCC;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniondc;
 import org.joml.Vector3dc;
 import org.valkyrienskies.core.game.ships.ShipData;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
@@ -118,6 +119,21 @@ public class ShipReaderPeripheral implements IPeripheral {
         }
         return new Object[0];
     }
+
+    @LuaFunction
+    public final Object[] getRotation() throws LuaException {
+        if (!level.isClientSide()) {
+            ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
+            if (ship != null) {
+                Quaterniondc rot = ship.getShipTransform().getShipCoordinatesToWorldCoordinatesRotation();
+                return new Object[] { rot.x(), rot.y(), rot.z(), rot.w() };
+            } else {
+                throw new LuaException("Not on a Ship");
+            }
+        }
+        return new Object[0];
+    }
+
 
     @NotNull
     @Override
