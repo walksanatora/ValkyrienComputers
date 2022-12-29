@@ -28,8 +28,20 @@ object ValkyrienComputersConfig {
             @JsonSchema(description = "Disable Ship Readers")
             val disableShipReaders = false
 
-            @JsonSchema(description = "Maximum Range of Radars")
-            val maxRadarRadius = 256
+            val RadarSettings = RADARSETTINGS()
+
+            class RADARSETTINGS {
+                @JsonSchema(description = "Maximum Range of Radars")
+                val maxRadarRadius = 256
+
+                val radarGetsName = true
+                val radarGetsPosition = true
+                val radarGetsMass = true
+                val radarGetsRotation = false
+                val radarGetsVelocity = false
+                val radarGetsDistance = false
+                val radarGetsSize = false
+            }
         }
 
         val OpenComputers = OPENCOMPUTERS()
