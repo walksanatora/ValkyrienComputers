@@ -11,6 +11,7 @@ import net.techtastic.vc.ValkyrienComputersBlocksCC;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
+import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.valkyrienskies.core.game.ships.ShipData;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
@@ -93,11 +94,25 @@ public class ShipReaderPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final Object[] getPosition() throws LuaException {
+    public final Object[] getWorldspacePosition() throws LuaException {
         if (!level.isClientSide()) {
             ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
             if (ship != null) {
                 Vector3dc vec = ship.getShipTransform().getShipPositionInWorldCoordinates();
+                return new Object[] { vec.x(), vec.y(), vec.z() };
+            } else {
+                throw new LuaException("Not on a Ship");
+            }
+        }
+        return new Object[0];
+    }
+
+    @LuaFunction
+    public final Object[] getShipyardPosition() throws LuaException {
+        if (!level.isClientSide()) {
+            ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
+            if (ship != null) {
+                Vector3dc vec = ship.getShipTransform().getShipPositionInShipCoordinates();
                 return new Object[] { vec.x(), vec.y(), vec.z() };
             } else {
                 throw new LuaException("Not on a Ship");
@@ -129,6 +144,46 @@ public class ShipReaderPeripheral implements IPeripheral {
                 return new Object[] { rot.x(), rot.y(), rot.z(), rot.w() };
             } else {
                 throw new LuaException("Not on a Ship");
+            }
+        }
+        return new Object[0];
+    }
+
+    @LuaFunction
+    public final Object[] transformPosition(double x, double y, double z) throws LuaException {
+        if (!level.isClientSide()) {
+            ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, new BlockPos(x, y, z));
+            if (ship != null) {
+                Vector3dc vec = ship.getShipToWorld().transformPosition(new Vector3d(x, y, z));
+                return new Object[] { vec.x(), vec.y(), vec.z() };
+            } else {
+                ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
+                if (ship != null) {
+                    Vector3dc vec = ship.getWorldToShip().transformPosition(new Vector3d(x, y, z));
+                    return new Object[] { vec.x(), vec.y(), vec.z() };
+                } else {
+                    throw new LuaException("Not on a Ship");
+                }
+            }
+        }
+        return new Object[0];
+    }
+
+    @LuaFunction
+    public final Object[] transformDirection(double x, double y, double z) throws LuaException {
+        if (!level.isClientSide()) {
+            ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, new BlockPos(x, y, z));
+            if (ship != null) {
+                Vector3dc vec = ship.getShipToWorld().transformDirection(new Vector3d(x, y, z));
+                return new Object[] { vec.x(), vec.y(), vec.z() };
+            } else {
+                ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
+                if (ship != null) {
+                    Vector3dc vec = ship.getWorldToShip().transformDirection(new Vector3d(x, y, z));
+                    return new Object[] { vec.x(), vec.y(), vec.z() };
+                } else {
+                    throw new LuaException("Not on a Ship");
+                }
             }
         }
         return new Object[0];
