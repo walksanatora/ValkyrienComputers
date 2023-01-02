@@ -8,6 +8,7 @@ import net.techtastic.vc.ValkyrienComputersConfig.Server.TIS;
 import net.techtastic.vc.ValkyrienComputersMod;
 import net.techtastic.vc.fabric.integrations.cc.eureka.EurekaPeripheralProviders;
 import net.techtastic.vc.fabric.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
+import net.techtastic.vc.fabric.integrations.tis.eureka.EurekaSerialInterfaceProviders;
 import net.techtastic.vc.fabric.integrations.tis.valkyrienskies.ValkyrienComputersModuleProviders;
 
 public class ValkyrienComputersModFabric implements ModInitializer {
@@ -25,7 +26,6 @@ public class ValkyrienComputersModFabric implements ModInitializer {
         COMPUTERCRAFT CC_Config = ValkyrienComputersConfig.SERVER.getComputerCraft();
         if (mods.isModLoaded("computercraft") && !CC_Config.getDisableComputerCraft()) {
             // ComputerCraft is loaded and Integration is not disabled in the config
-
             ValkyrienComputersPeripheralProviders.registerPeripheralProviders();
 
             if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
@@ -37,11 +37,11 @@ public class ValkyrienComputersModFabric implements ModInitializer {
         TIS TIS_Config = ValkyrienComputersConfig.SERVER.getTIS3D();
         if (mods.isModLoaded("tis3d") && !TIS_Config.getDisableTIS3D()) {
             // TIS-3D is loaded
-
             ValkyrienComputersModuleProviders.registerModuleProivders();
 
             if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
                 // Eureka is loaded
+                EurekaSerialInterfaceProviders.registerSerialInterfaceProivders();
             }
         }
     }
