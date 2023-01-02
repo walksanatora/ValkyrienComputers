@@ -2,8 +2,8 @@ package net.techtastic.vc.fabric.integrations.tis.eureka;
 
 import li.cil.tis3d.api.serial.SerialInterface;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.valkyrienskies.core.game.ships.ShipData;
 import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity;
 import org.valkyrienskies.eureka.ship.EurekaShipControl;
@@ -13,10 +13,12 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 public class ShipHelmSerialInterface implements SerialInterface {
 	private ShipHelmBlockEntity helm;
 	private Info info;
+	private Impulses impulse;
 
 	public ShipHelmSerialInterface(ShipHelmBlockEntity helm) {
 		this.helm = helm;
 		this.info = Info.BALLOONS;
+		this.impulse = Impulses.NONE;
 	}
 
 	private enum Info {
@@ -28,6 +30,16 @@ public class ShipHelmSerialInterface implements SerialInterface {
 		ALIGNING
 	}
 
+	private enum Impulses {
+		FORWARD,
+		BACKWARD,
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN,
+		NONE
+	}
+
 	@Override
 	public boolean canWrite() {
 		return true;
@@ -35,6 +47,104 @@ public class ShipHelmSerialInterface implements SerialInterface {
 
 	@Override
 	public void write(short i) {
+		switch (i) {
+			case 0:
+				info = Info.HELMS;
+				return;
+			case 1:
+				info = Info.ANCHORS;
+				return;
+			case 2:
+				info = Info.BALLOONS;
+				return;
+			case 3:
+				info = Info.ACTIVE_ANCHORS;
+				return;
+			case 4:
+				info = Info.CRUISING;
+				return;
+			case 5:
+				info = Info.ALIGNING;
+				return;
+			case 6:
+				impulse = Impulses.FORWARD;
+				break;
+			case 7:
+				impulse = Impulses.BACKWARD;
+				break;
+			case 8:
+				impulse = Impulses.LEFT;
+				break;
+			case 9:
+				impulse = Impulses.RIGHT;
+				break;
+			case 10:
+				impulse = Impulses.UP;
+				break;
+			case 11:
+				impulse = Impulses.DOWN;
+				break;
+			default:
+				return;
+		}
+
+		ShipData data = VSGameUtilsKt.getShipManagingPos((ServerLevel) helm.getLevel(), helm.getBlockPos());
+		if (data == null) return;
+		SeatedControllingPlayer player = data.getAttachment(SeatedControllingPlayer.class);
+		if (player == null) {
+			player = new SeatedControllingPlayer(helm.getBlockState().getValue(BlockStateProperties.FACING));
+			data.saveAttachment(SeatedControllingPlayer.class, player);
+		}
+		long currentTime = helm.getLevel().getGameTime();
+		while (helm.getLevel().getGameTime() - currentTime < 1) {
+			switch (impulse) {
+				case FORWARD:
+					player.setForwardImpulse(1.0f);
+					break;
+				case BACKWARD:
+					player.setForwardImpulse(-1.0f);
+				case LEFT:
+					player.setLeftImpulse(1.0f);
+					break;
+				case RIGHT:
+					player.setLeftImpulse(-1.0f);
+					break;
+				case UP:
+					player.setUpImpulse(1.0f);
+					break;
+				case DOWN:
+					player.setUpImpulse(-1.0f);
+					break;
+				default:
+					return;
+			}
+			data.saveAttachment(SeatedControllingPlayer.class, player);
+		}
+
+		switch (impulse) {
+			case FORWARD:
+				player.setForwardImpulse(0.0f);
+				break;
+			case BACKWARD:
+				player.setForwardImpulse(0.0f);
+			case LEFT:
+				player.setLeftImpulse(0.0f);
+				break;
+			case RIGHT:
+				player.setLeftImpulse(0.0f);
+				break;
+			case UP:
+				player.setUpImpulse(0.0f);
+				break;
+			case DOWN:
+				player.setUpImpulse(0.0f);
+				break;
+			default:
+				return;
+		}
+
+		impulse = Impulses.NONE;
+		data.saveAttachment(SeatedControllingPlayer.class, player);
 	}
 
 	@Override
