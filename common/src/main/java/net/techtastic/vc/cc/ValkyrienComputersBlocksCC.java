@@ -1,11 +1,11 @@
-package net.techtastic.vc;
+package net.techtastic.vc.cc;
 
 import dan200.computercraft.shared.ComputerCraftRegistry;
 import dan200.computercraft.shared.media.items.ItemDisk;
 import dan200.computercraft.shared.util.CreativeTabMain;
-import me.shedaniel.architectury.registry.CreativeTabs;
-import me.shedaniel.architectury.registry.DeferredRegister;
-import me.shedaniel.architectury.registry.RegistrySupplier;
+import dev.architectury.registry.CreativeTabs;
+import dev.architectury.registry.DeferredRegister;
+import dev.architectury.registry.RegistrySupplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -17,6 +17,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import net.techtastic.vc.ValkyrienComputersConfig;
+import net.techtastic.vc.ValkyrienComputersMod;
+import net.techtastic.vc.ValkyrienComputersTab;
 
 import java.util.Iterator;
 

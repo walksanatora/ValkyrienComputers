@@ -7,9 +7,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.techtastic.vc.ValkyrienComputersConfig;
-import net.techtastic.vc.ValkyrienComputersBlocksCC;
+import net.techtastic.vc.cc.ValkyrienComputersBlocksCC;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.valkyrienskies.core.api.Ship;
@@ -45,27 +46,21 @@ public class RadarPeripheral implements IPeripheral {
 	}
 
 	public Object[] scanForShips(Level level, BlockPos position, double radius) {
+		RADARSETTINGS settings = ValkyrienComputersConfig.SERVER.getComputerCraft().getRadarSettings();
+
 		if (level == null || position == null) {
-			Object[] nullReturn = new Object[1];
-			nullReturn[0] = "booting";
-			return nullReturn;
+			return new Object[] {"booting"};
 		}
 
 		if (!level.isClientSide()) {
 			// THROW EARLY RESULTS
-			Object[] earlyResult = new Object[1];
-
 			if (radius < 1.0) {
-				earlyResult[0] = "radius too small";
-				return earlyResult;
-			} else if (radius > ValkyrienComputersConfig.SERVER.getComputerCraft().getMaxRadarRadius()) {
-				earlyResult[0] = "radius too big";
-				return earlyResult;
+				return new Object[] {"radius too small"};
+			} else if (radius > settings.getMaxRadarRadius()) {
+				return new Object[] {"radius too big"};
 			}
-
 			if (!level.getBlockState(position).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get())) {
-				earlyResult[0] = "no radar";
-				return earlyResult;
+				return new Object[] {"no radar"};
 			}
 
 			// IF RADAR IS ON A SHIP, USE THE WORLD SPACE COORDINATES
@@ -99,6 +94,17 @@ public class RadarPeripheral implements IPeripheral {
 				resultPos[1] = pos.y();
 				resultPos[2] = pos.z();
 				result.put("pos", resultPos);
+
+				if (ValkyrienComputersConfig.SERVER.getComputerCraft().getRadarGivesDistance()) {
+					Quaterniondc rot = ship.getShipTransform().getShipCoordinatesToWorldCoordinatesRotation();
+
+					Object[] resultRot = new Object[4];
+					resultRot[0] = rot.x();
+					resultRot[1] = rot.y();
+					resultRot[2] = rot.z();
+					resultRot[3] = rot.w();
+					result.put("rot", resultRot);
+				}
 
 				ShipData data = VSGameUtilsKt.getShipManagingPos(((ServerLevel) level), vec.x, vec.y, vec.z);
 
