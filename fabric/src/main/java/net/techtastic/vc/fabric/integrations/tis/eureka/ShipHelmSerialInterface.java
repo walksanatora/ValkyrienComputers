@@ -93,9 +93,13 @@ public class ShipHelmSerialInterface implements SerialInterface {
 				impulse = Impulses.ALIGN;
 				break;
 			case 14:
+				if (helm.getAssembled()) break;
 				helm.assemble();
 				break;
 			case 15:
+				ShipData data = VSGameUtilsKt.getShipManagingPos((ServerLevel) helm.getLevel(), helm.getBlockPos());
+				if (data == null) break;
+				if (data.getAttachment(EurekaShipControl.class) == null) break;
 				helm.disassemble();
 				break;
 			default:
@@ -108,7 +112,7 @@ public class ShipHelmSerialInterface implements SerialInterface {
 		if (control == null) return;
 		SeatedControllingPlayer player = data.getAttachment(SeatedControllingPlayer.class);
 		if (player == null) {
-			player = new SeatedControllingPlayer(helm.getBlockState().getValue(BlockStateProperties.FACING));
+			player = new SeatedControllingPlayer(helm.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
 			data.saveAttachment(SeatedControllingPlayer.class, player);
 		}
 		long currentTime = helm.getLevel().getGameTime();

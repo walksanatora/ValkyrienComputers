@@ -37,11 +37,11 @@ public class ValkyrienComputersModFabric implements ModInitializer {
         TIS TIS_Config = ValkyrienComputersConfig.SERVER.getTIS3D();
         if (mods.isModLoaded("tis3d") && !TIS_Config.getDisableTIS3D()) {
             // TIS-3D is loaded
-            ValkyrienComputersModuleProviders.registerModuleProivders();
+            //ValkyrienComputersModuleProviders.registerModuleProivders();
 
             if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
                 // Eureka is loaded
-                EurekaSerialInterfaceProviders.registerSerialInterfaceProivders();
+                //EurekaSerialInterfaceProviders.registerSerialInterfaceProivders();
             }
         }
     }
