@@ -3,8 +3,8 @@ package net.techtastic.vc.forge;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -13,11 +13,11 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.techtastic.vc.forge.integrations.cc.eureka.EurekaPeripheralProviders;
 import net.techtastic.vc.forge.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
-import org.valkyrienskies.core.config.VSConfigClass;
 import net.techtastic.vc.ValkyrienComputersConfig;
 import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT;
 import net.techtastic.vc.ValkyrienComputersConfig.Server.OPENCOMPUTERS;
 import net.techtastic.vc.ValkyrienComputersMod;
+import org.valkyrienskies.core.impl.config.VSConfigClass;
 import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig;
 
 @Mod(
@@ -33,10 +33,10 @@ public class ValkyrienComputersModForge {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::clientSetup);
 
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (Minecraft client, Screen parent) ->
+        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
+                () -> new ConfigGuiHandler.ConfigGuiFactory((Minecraft client, Screen parent) ->
                         VSClothConfig.createConfigScreenFor(parent,
-                                VSConfigClass.Companion.getRegisteredConfig(ValkyrienComputersConfig.class))
+                                VSConfigClass.Companion.getRegisteredConfig(ValkyrienComputersConfig.class)))
         );
 
         eventBus.addListener(this::clientSetup);

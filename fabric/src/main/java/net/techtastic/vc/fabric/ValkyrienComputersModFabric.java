@@ -8,7 +8,6 @@ import net.techtastic.vc.ValkyrienComputersConfig.Server.TIS;
 import net.techtastic.vc.ValkyrienComputersMod;
 import net.techtastic.vc.fabric.integrations.cc.eureka.EurekaPeripheralProviders;
 import net.techtastic.vc.fabric.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
-import net.techtastic.vc.fabric.integrations.tis.valkyrienskies.ValkyrienComputersModuleProviders;
 
 public class ValkyrienComputersModFabric implements ModInitializer {
     @Override
@@ -38,7 +37,7 @@ public class ValkyrienComputersModFabric implements ModInitializer {
         if (mods.isModLoaded("tis3d") && !TIS_Config.getDisableTIS3D()) {
             // TIS-3D is loaded
 
-            ValkyrienComputersModuleProviders.registerModuleProivders();
+            //ValkyrienComputersModuleProviders.registerModuleProivders();
 
             if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
                 // Eureka is loaded

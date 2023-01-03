@@ -14,7 +14,7 @@ public class ShipReaderPeripheralProvider implements IPeripheralProvider {
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         if (
-                level.getBlockState(blockPos).getBlock().equals(ValkyrienComputersBlocksCC.READER.get()) &&
+                level.getBlockState(blockPos).is(ValkyrienComputersBlocksCC.READER.get()) &&
                         !ValkyrienComputersConfig.SERVER.getComputerCraft().getDisableShipReaders()
         ) {
             return LazyOptional.of(() -> new ShipReaderPeripheral(level, blockPos));

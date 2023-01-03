@@ -16,12 +16,6 @@ dependencies {
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
     api "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
-
-    // CC Tweaked
-    modCompileOnly("curse.maven:cctweaked-282001:4061944")
-
-    // CC Restitched
-    modCompileOnly("curse.maven:cc-restitched-462672:3622561")
 }
 
 publishing {

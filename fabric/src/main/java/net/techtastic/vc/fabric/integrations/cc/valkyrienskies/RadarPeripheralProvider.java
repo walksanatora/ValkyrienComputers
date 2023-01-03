@@ -12,7 +12,7 @@ public class RadarPeripheralProvider implements IPeripheralProvider {
 	@Override
 	public IPeripheral getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
 		if (
-				level.getBlockState(blockPos).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get())
+				level.getBlockState(blockPos).is(ValkyrienComputersBlocksCC.RADAR.get())
 		) {
 			return new RadarPeripheral(level, blockPos);
 		}

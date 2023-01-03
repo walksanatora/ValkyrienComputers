@@ -13,7 +13,7 @@ public class ShipReaderPeripheralProvider implements IPeripheralProvider {
     @Override
     public IPeripheral getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         if (
-                level.getBlockState(blockPos).getBlock().is(ValkyrienComputersBlocksCC.READER.get()) &&
+                level.getBlockState(blockPos).is(ValkyrienComputersBlocksCC.READER.get()) &&
                         !ValkyrienComputersConfig.SERVER.getComputerCraft().getDisableShipReaders()
         ) {
             return new ShipReaderPeripheral(level, blockPos);

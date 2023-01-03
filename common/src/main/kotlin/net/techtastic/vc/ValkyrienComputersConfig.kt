@@ -17,10 +17,10 @@ object ValkyrienComputersConfig {
 
         class COMPUTERCRAFT {
             @JsonSchema(description = "Disable ComputerCraft Integration")
-            val disableComputerCraft = false;
+            val disableComputerCraft = false
 
             @JsonSchema(description = "Disable Eureka Integration")
-            val disableEureka = false;
+            val disableEureka = false
 
             @JsonSchema(description = "Disable Radars")
             val disableRadars = false
@@ -45,17 +45,16 @@ object ValkyrienComputersConfig {
                 val radarGetsDistance = false
                 val radarGetsSize = false
             }
-            
         }
 
         val OpenComputers = OPENCOMPUTERS()
 
         class OPENCOMPUTERS {
             @JsonSchema(description = "Disabled OpenComputers Integration")
-            val disableOpenComputers = false;
+            val disableOpenComputers = false
 
             @JsonSchema(description = "Disable Eureka Integration")
-            val disableEureka = false;
+            val disableEureka = false
 
             @JsonSchema(description = "Disable Radars")
             val disableRadars = false
@@ -71,10 +70,10 @@ object ValkyrienComputersConfig {
 
         class TIS {
             @JsonSchema(description = "Disable TIS-3D Integration")
-            val disableTIS3D = false;
+            val disableTIS3D = false
 
             @JsonSchema(description = "Disable Eureka Integration")
-            val disableEureka = false;
+            val disableEureka = false
 
             @JsonSchema(description = "Disable Radars")
             val disableRadars = false

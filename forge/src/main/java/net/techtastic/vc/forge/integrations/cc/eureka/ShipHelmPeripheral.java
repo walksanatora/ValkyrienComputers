@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.valkyrienskies.core.game.ships.ShipData;
+import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.eureka.block.ShipHelmBlock;
 import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity;
 import org.valkyrienskies.eureka.ship.EurekaShipControl;
@@ -46,7 +46,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean impulseLeft(int ticks) throws LuaException {
+    public final boolean impluseLeft(int ticks) throws LuaException {
         return applyThrust("left", ticks);
     }
 
@@ -73,7 +73,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     @LuaFunction
     public final boolean isCruising() throws LuaException {
         if (world.isClientSide()) {
-            ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+            ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
             if (ship != null) {
                 EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
                 if (control != null) {
@@ -93,7 +93,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean startCruising() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -118,7 +118,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean stopCruising() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -143,7 +143,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean startAlignment() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -163,7 +163,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean stopAlignment() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -183,7 +183,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean disassemble() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -208,7 +208,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean assemble() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship == null) {
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof ShipHelmBlockEntity) {
@@ -228,7 +228,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final int getBalloonAmount() throws LuaException {
         if (world.isClientSide()) return 0;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -244,7 +244,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     @LuaFunction
     public final int getAnchorAmount() throws LuaException {
         if (world.isClientSide()) return 0;
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -261,7 +261,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final int getActiveAnchorAmount() throws LuaException {
         if (world.isClientSide()) return 0;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -278,7 +278,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final boolean areAnchorsActive() throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -295,7 +295,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public final int getShipHelmAmount() throws LuaException {
         if (world.isClientSide()) return 0;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) {
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) {
@@ -311,7 +311,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     public boolean applyThrust(String direction, int gameTicks) throws LuaException {
         if (world.isClientSide()) return false;
 
-        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
         if (ship != null) { //Is The Peripheral on a Ship?
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) { //Is the Ship being controlled by Eureka?

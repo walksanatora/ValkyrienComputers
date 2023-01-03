@@ -13,7 +13,7 @@ public class RadarPeripheralProvider implements IPeripheralProvider {
 	@Override
 	public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
 		if (
-				level.getBlockState(blockPos).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get())
+				level.getBlockState(blockPos).is(ValkyrienComputersBlocksCC.RADAR.get())
 		) {
 			return LazyOptional.of(() -> new RadarPeripheral(level, blockPos));
 		}

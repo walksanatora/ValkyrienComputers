@@ -4,17 +4,21 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.techtastic.vc.ValkyrienComputersConfig;
+import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT.RADARSETTINGS;
+import net.techtastic.vc.ValkyrienComputersMod;
 import net.techtastic.vc.cc.ValkyrienComputersBlocksCC;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
-import org.valkyrienskies.core.api.Ship;
-import org.valkyrienskies.core.game.ships.ShipData;
+import org.joml.primitives.AABBic;
+import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.HashMap;
@@ -42,7 +46,7 @@ public class RadarPeripheral implements IPeripheral {
 
 	@Override
 	public boolean equals(@Nullable IPeripheral iPeripheral) {
-		return level.getBlockState(pos).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get());
+		return level.getBlockState(pos).is(ValkyrienComputersBlocksCC.RADAR.get());
 	}
 
 	public Object[] scanForShips(Level level, BlockPos position, double radius) {
@@ -59,7 +63,7 @@ public class RadarPeripheral implements IPeripheral {
 			} else if (radius > settings.getMaxRadarRadius()) {
 				return new Object[] {"radius too big"};
 			}
-			if (!level.getBlockState(position).getBlock().is(ValkyrienComputersBlocksCC.RADAR.get())) {
+			if (!level.getBlockState(position).is(ValkyrienComputersBlocksCC.RADAR.get())) {
 				return new Object[] {"no radar"};
 			}
 
@@ -76,28 +80,27 @@ public class RadarPeripheral implements IPeripheral {
 
 			// TESTING FOR NO SHIPS
 			if (results.length == 0) {
-				return new Object[] {"no ships"};;
+				return new Object[] {"no ships"};
 			}
 
 			// Give results the ID, X, Y, and z of each Ship
 			for (Vector3d vec : ships) {
-				Ship ship = VSGameUtilsKt.getShipManagingPos(level, vec);
-				ShipData data = VSGameUtilsKt.getShipManagingPos(((ServerLevel) level), vec.x, vec.y, vec.z);
-				Vector3dc pos = ship.getShipTransform().getShipPositionInWorldCoordinates();
+				ServerShip data = VSGameUtilsKt.getShipManagingPos(((ServerLevel) level), vec.x, vec.y, vec.z);
+				Vector3dc pos = data.getTransform().getPositionInWorld();
 
 				HashMap<String, Object> result = new HashMap<>();
 				// Give Name
-				if (settings.getRadarGetsName()) result.put("name", data.getName());
+				//if (settings.getRadarGetsName()) result.put("name", data.getName());
 
 				// Give Position
 				if (settings.getRadarGetsPosition()) result.put("position", new Object[] {pos.x(), pos.y(), pos.z()});
 
 				// Give Mass
-				if (settings.getRadarGetsMass()) result.put("mass", data.getInertiaData().getShipMass());
+				if (settings.getRadarGetsMass()) result.put("mass", data.getInertiaData().getMass());
 
 				// Give Rotation
 				if (settings.getRadarGetsRotation()) {
-					Quaterniondc rot = ship.getShipTransform().getShipCoordinatesToWorldCoordinatesRotation();
+					Quaterniondc rot = data.getTransform().getShipToWorldRotation();
 					result.put("rotation", new Object[]{rot.x(), rot.y(), rot.z(), rot.w()});
 				}
 
@@ -120,7 +123,7 @@ public class RadarPeripheral implements IPeripheral {
 
 				// Give Size
 				if (settings.getRadarGetsSize()) {
-					AABBic aabb = ship.getShipVoxelAABB();
+					AABBic aabb = data.getShipAABB();
 					result.put("size", new Object[]{
 							Math.abs(aabb.maxX() - aabb.minX()),
 							Math.abs(aabb.maxY() - aabb.minY()),

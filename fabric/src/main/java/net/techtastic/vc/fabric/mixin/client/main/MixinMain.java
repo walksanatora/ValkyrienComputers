@@ -12,7 +12,8 @@ public class MixinMain {
 
     @Inject(
             at = @At("HEAD"),
-            method = "main"
+            method = "main",
+            remap = false
     )
     private static void beforeMain(final String[] args, final CallbackInfo ci) {
         AutoDependenciesFabric.runUpdater();

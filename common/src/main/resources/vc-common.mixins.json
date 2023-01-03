@@ -3,7 +3,7 @@
   "package": "net.techtastic.vc.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "client.PlayerEntityModelMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1
