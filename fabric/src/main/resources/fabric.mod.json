@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "vc",
   "version": "${version}",
-  "name": "Valkyrien Computers",
+  "name": "Valkyrien Computers Mod",
   "description": "Computer-based Mod Integration with Valkyrien Skies addons",
   "authors": [
     "TechTastic"
@@ -11,7 +11,7 @@
   ],
   "contact": {
     "homepage": "https://valkyrienskies.org/",
-    "sources": "https://github.com/ValkyrienSkies/Eureka"
+    "sources": "https://github.com/ValkyrienSkies/ValkyrienComputers"
   },
   "license": "Apache-2.0",
   "icon": "assets/vc/icon.png",
@@ -21,10 +21,13 @@
       "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
     ],
     "client": [
-      "net.techtastic.vc.fabric.ValkyrienComputersClientModFabric"
+      "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
+    ],
+    "preLaunch": [
+      "net.techtastic.vc.fabric.ValkyrienPreLaunch"
     ],
     "modmenu": [
-      "net.techtastic.vc.fabric.ValkyrienComputersModMenuFabric"
+      "net.techtastic.vc.fabric.ValkyrienComputersModFabric"
     ]
   },
   "mixins": [
@@ -32,6 +35,7 @@
     "vc.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.16.5"
+    "minecraft": ">=1.18.2",
+    "valkyrienskies": ">=${vs2_version}"
   }
 }

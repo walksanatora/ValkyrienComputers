@@ -1,5 +1,5 @@
 {
-  "block.vc.radar_cc": "Ship Radar",
-  "block.vc.reader_cc": "Ship Reader",
-  "itemGroup.vc.vc_tab": "Valkyrien Computers"
+  "block.vc.balloon": "Balloon",
+  "block.vc.farter": "Farter",
+  "block.vc.wing": "Wing"
 }

@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "vc:block/bearingbase",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "vc:block/bearingbase",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "vc:block/bearingbase",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vc:block/bearingbase",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "vc:block/bearingbase",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "vc:block/bearingbase",
+      "x": 90
+    }
+  }
+}

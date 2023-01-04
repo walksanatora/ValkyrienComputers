@@ -1,37 +1,36 @@
 package net.techtastic.vc.forge;
 
-import dev.architectury.platform.forge.EventBuses;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LoadingModList;
+import net.techtastic.vc.ValkyrienComputersMod;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.techtastic.vc.forge.integrations.cc.eureka.EurekaPeripheralProviders;
-import net.techtastic.vc.forge.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
-import net.techtastic.vc.ValkyrienComputersConfig;
-import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT;
-import net.techtastic.vc.ValkyrienComputersConfig.Server.OPENCOMPUTERS;
-import net.techtastic.vc.ValkyrienComputersMod;
+import net.techtastic.vc.forge.cc.eureka.EurekaPeripheralProviders;
+import net.techtastic.vc.forge.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
 import org.valkyrienskies.core.impl.config.VSConfigClass;
+import net.techtastic.vc.ValkyrienComputersBlockEntities;
+import net.techtastic.vc.ValkyrienComputersConfig;
+//import net.techtastic.vc.block.WoodType;
+//import net.techtastic.vc.blockentity.renderer.ShipHelmBlockEntityRenderer;
+//import net.techtastic.vc.blockentity.renderer.WheelModels;
 import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig;
 
-@Mod(
-        ValkyrienComputersMod.MOD_ID
-)
+@Mod(ValkyrienComputersMod.MOD_ID)
 public class ValkyrienComputersModForge {
     boolean happendClientSetup = false;
+    static IEventBus MOD_BUS;
 
     public ValkyrienComputersModForge() {
         // Submit our event bus to let architectury register our content on the right time
-
-        EventBuses.registerModEventBus(ValkyrienComputersMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        eventBus.addListener(this::clientSetup);
+        MOD_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+        MOD_BUS.addListener(this::clientSetup);
 
         ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
                 () -> new ConfigGuiHandler.ConfigGuiFactory((Minecraft client, Screen parent) ->
@@ -39,28 +38,17 @@ public class ValkyrienComputersModForge {
                                 VSConfigClass.Companion.getRegisteredConfig(ValkyrienComputersConfig.class)))
         );
 
-        eventBus.addListener(this::clientSetup);
+        MOD_BUS.addListener(this::clientSetup);
 
         ValkyrienComputersMod.init();
 
-        LoadingModList mods = FMLLoader.getLoadingModList();
-        COMPUTERCRAFT CC_Config = ValkyrienComputersConfig.SERVER.getComputerCraft();
-        if (mods.getModFileById("computercraft") != null && !CC_Config.getDisableComputerCraft()) {
-            // ComputerCraft is loaded and Integration is not disabled in the config
-
+        LoadingModList mods = LoadingModList.get();
+        ValkyrienComputersConfig.Server.COMPUTERCRAFT ccConfig = ValkyrienComputersConfig.SERVER.getComputerCraft();
+        if (mods.getModFileById("computercraft") != null && !ccConfig.getDisableComputerCraft()) {
             ValkyrienComputersPeripheralProviders.registerPeripheralProviders();
 
-            if (mods.getModFileById("vs_eureka") != null) {
-                // Eureka is loaded
+            if (mods.getModFileById("vs_eureka") != null && !ccConfig.getDisableEurekaIntegration()) {
                 EurekaPeripheralProviders.registerPeripheralProviders();
-            }
-        }
-
-        OPENCOMPUTERS OC_Config = ValkyrienComputersConfig.SERVER.getOpenComputers();
-        if (mods.getModFileById("opencomputers") != null && !OC_Config.getDisableOpenComputers()) {
-            // ComputerCraft is loaded and Integration is not disabled in the config
-            if (mods.getModFileById("vs_eureka") != null && !CC_Config.getDisableEureka()) {
-                // Eureka is loaded
             }
         }
     }
@@ -71,5 +59,23 @@ public class ValkyrienComputersModForge {
 
         ValkyrienComputersMod.initClient();
 
+//        WheelModels.INSTANCE.setModelGetter(woodType -> ForgeModelBakery.instance().getBakedTopLevelModels()
+//                .getOrDefault(
+//                        new ResourceLocation(ValkyrienComputersMod.MOD_ID, "block/" + woodType.getResourceName() + "_ship_helm_wheel"),
+//                        Minecraft.getInstance().getModelManager().getMissingModel()
+//                ));
     }
+
+//    void entityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+//        event.registerBlockEntityRenderer(
+//                ValkyrienComputersBlockEntities.INSTANCE.getSHIP_HELM().get(),
+//                ShipHelmBlockEntityRenderer::new
+//        );
+//    }
+
+//    void onModelRegistry(final ModelRegistryEvent event) {
+//        for (WoodType woodType : WoodType.values()) {
+//            ForgeModelBakery.addSpecialModel(new ResourceLocation(ValkyrienComputersMod.MOD_ID, "block/" + woodType.getResourceName() + "_ship_helm_wheel"));
+//        }
+//    }
 }

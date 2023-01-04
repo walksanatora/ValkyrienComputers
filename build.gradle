@@ -19,7 +19,7 @@ if (project.hasProperty("CustomReleaseVersion")) {
 } else {
     String gitRevision = "git rev-parse HEAD".execute().text.trim()
 
-    version = eureka_version + '+' + gitRevision.substring(0, 10)
+    version = takeoff_version + '+' + gitRevision.substring(0, 10)
 }
 
 architectury {
@@ -83,7 +83,7 @@ subprojects {
 }
 
 
-allprojects {
+    allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
@@ -91,19 +91,19 @@ allprojects {
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.version
 
-    repositories {
-        mavenLocal()
-        maven {
-            name = "Valkyrien Skies Internal"
-            url = project.vs_maven_url ?: 'https://maven.valkyrienskies.org'
-            if (project.vs_maven_username && project.vs_maven_password) {
-                credentials {
-                    username = project.vs_maven_username
-                    password = project.vs_maven_password
+        repositories {
+            mavenLocal()
+            maven {
+                name = "Valkyrien Skies Internal"
+                url = project.vs_maven_url ?: 'https://maven.valkyrienskies.org'
+                if (project.vs_maven_username && project.vs_maven_password) {
+                    credentials {
+                        username = project.vs_maven_username
+                        password = project.vs_maven_password
+                    }
                 }
             }
         }
-    }
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"

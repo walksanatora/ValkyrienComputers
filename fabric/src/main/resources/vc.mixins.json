@@ -1,12 +1,10 @@
 {
   "required": true,
   "package": "net.techtastic.vc.fabric.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "plugin": "net.techtastic.vc.fabric.mixin.client.ValkyrienFabricMixinConfigPlugin",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
   "client": [
-    "client.main.MixinMain"
   ],
   "injectors": {
     "defaultRequire": 1

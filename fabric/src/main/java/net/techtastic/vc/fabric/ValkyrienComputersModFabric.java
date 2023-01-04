@@ -1,47 +1,75 @@
 package net.techtastic.vc.fabric;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.techtastic.vc.ValkyrienComputersConfig;
-import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT;
-import net.techtastic.vc.ValkyrienComputersConfig.Server.TIS;
 import net.techtastic.vc.ValkyrienComputersMod;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.api.ModInitializer;
 import net.techtastic.vc.fabric.integrations.cc.eureka.EurekaPeripheralProviders;
 import net.techtastic.vc.fabric.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
+import org.valkyrienskies.core.impl.config.VSConfigClass;
+import net.techtastic.vc.ValkyrienComputersConfig;
+//import net.techtastic.vc.block.WoodType;
+//import net.techtastic.vc.blockentity.renderer.ShipHelmBlockEntityRenderer;
+//import net.techtastic.vc.blockentity.renderer.WheelModels;
+import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig;
+import org.valkyrienskies.mod.fabric.common.ValkyrienSkiesModFabric;
 
 public class ValkyrienComputersModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        try {
-            Class.forName("org.valkyrienskies.mod.fabric.common.ValkyrienSkiesModFabric");
-        } catch (final ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        // force VS2 to load before takeoff
+        new ValkyrienSkiesModFabric().onInitialize();
 
-        ValkyrienComputersMod.init();
-
-        FabricLoader mods = FabricLoader.getInstance();
-        COMPUTERCRAFT CC_Config = ValkyrienComputersConfig.SERVER.getComputerCraft();
-        if (mods.isModLoaded("computercraft") && !CC_Config.getDisableComputerCraft()) {
-            // ComputerCraft is loaded and Integration is not disabled in the config
-
+        FabricLoader loader = FabricLoader.getInstance();
+        ValkyrienComputersConfig.Server.COMPUTERCRAFT ccConfig = ValkyrienComputersConfig.SERVER.getComputerCraft();
+        if (loader.isModLoaded("computercraft") && !ccConfig.getDisableComputerCraft()) {
             ValkyrienComputersPeripheralProviders.registerPeripheralProviders();
 
-            if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
-                // Eureka is loaded
+            if (loader.isModLoaded("vs_eureka") && !ccConfig.getDisableEurekaIntegration()) {
                 EurekaPeripheralProviders.registerPeripheralProviders();
             }
         }
 
-        TIS TIS_Config = ValkyrienComputersConfig.SERVER.getTIS3D();
-        if (mods.isModLoaded("tis3d") && !TIS_Config.getDisableTIS3D()) {
-            // TIS-3D is loaded
+        ValkyrienComputersMod.init();
+    }
 
-            //ValkyrienComputersModuleProviders.registerModuleProivders();
+    @Environment(EnvType.CLIENT)
+    public static class Client implements ClientModInitializer {
 
-            if (mods.isModLoaded("vs_eureka") && !CC_Config.getDisableEureka()) {
-                // Eureka is loaded
-            }
+        @Override
+        public void onInitializeClient() {
+            ValkyrienComputersMod.initClient();
+//            BlockEntityRendererRegistry.INSTANCE.register(
+//                    ValkyrienComputersBlockEntities.INSTANCE.getSHIP_HELM().get(),
+//                    ShipHelmBlockEntityRenderer::new
+//            );
+
+//            ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> {
+//                for (WoodType woodType : WoodType.values()) {
+//                    out.accept(new ResourceLocation(ValkyrienComputersMod.MOD_ID, "block/" + woodType.getResourceName() + "_ship_helm_wheel"));
+//                }
+//            });
+//
+//            WheelModels.INSTANCE.setModelGetter(woodType ->
+//                    Minecraft.getInstance().getModelManager().getModel(
+//                            new ModelResourceLocation(
+//                                    new ResourceLocation(ValkyrienComputersMod.MOD_ID, "ship_helm_wheel"),
+//                                    "wood=" + woodType.getResourceName()
+//                            )));
+        }
+    }
+
+    public static class ModMenu implements ModMenuApi {
+        @Override
+        public ConfigScreenFactory<?> getModConfigScreenFactory() {
+            return (parent) -> VSClothConfig.createConfigScreenFor(
+                    parent,
+                    VSConfigClass.Companion.getRegisteredConfig(ValkyrienComputersConfig.class)
+            );
         }
     }
 }

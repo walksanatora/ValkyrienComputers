@@ -1,49 +1,42 @@
 modLoader = "javafml"
-loaderVersion = "[36,)"
-issueTrackerURL = "https://github.com/ValkyrienSkies/Valkyrien-Skies-2/issues"
-license = "Apache-2.0"
+loaderVersion = "[40,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
 
 [[mods]]
 modId = "vc"
 version = "${version}"
 displayName = "Valkyrien Computers"
-authors = ["TechTastic"]
+authors = "TechTastic"
 description = '''
 Computer-based Mod Integration with Valkyrien Skies addons
 '''
-logoFile = "icon.png"
+#logoFile = ""
 
 [[dependencies.vc]]
 modId = "forge"
-mandatory = false
-versionRange = "[36,)"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.vc]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.vc]]
 modId = "valkyrienskies"
-mandatory = false
-versionRange = "[1,)"
+mandatory = true
+versionRange = "[${vs2_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.vc]]
-modId = "minecraft"
-mandatory = false
-versionRange = "[1.16.5,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.vc]]
-modId = "minecraft"
-mandatory = false
-versionRange = "[1.16.5,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.vc]]
-modId = "architectury"
-mandatory = false
-versionRange = "[1.31.61,)"
-ordering = "AFTER"
-side = "BOTH"
+#[[dependencies.vc]]
+#modId = "create"
+#mandatory = true
+#versionRange = "[0.5.0e,)"
+#ordering = "NONE"
+#side = "BOTH"
