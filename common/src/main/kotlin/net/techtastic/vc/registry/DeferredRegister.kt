@@ -14,11 +14,11 @@ interface DeferredRegister<T> : Iterable<RegistrySupplier<T>> {
         private val backend: DeferredRegisterBackend = load()
 
         fun <T> create(id: String, registry: ResourceKey<Registry<T>>): DeferredRegister<T> =
-            backend.makeDeferredRegister(id, registry)
+                backend.makeDeferredRegister(id, registry)
 
         private fun load(): DeferredRegisterBackend =
-            ServiceLoader.load(DeferredRegisterBackend::class.java)
-                .findFirst()
-                .orElseThrow { NullPointerException("Failed to load service for DeferredRegisterBackend") }
+                ServiceLoader.load(DeferredRegisterBackend::class.java)
+                        .findFirst()
+                        .orElseThrow { NullPointerException("Failed to load service for DeferredRegisterBackend") }
     }
 }
