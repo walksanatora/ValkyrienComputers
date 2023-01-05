@@ -1,4 +1,4 @@
-package net.techtastic.vc.forge.cc.eureka;
+package net.techtastic.vc.forge.integrations.cc.eureka;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;

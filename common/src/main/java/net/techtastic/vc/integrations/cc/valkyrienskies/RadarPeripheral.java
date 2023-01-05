@@ -6,9 +6,9 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.techtastic.vc.ValkyrienComputersBlocks;
 import net.techtastic.vc.ValkyrienComputersConfig;
 import net.techtastic.vc.ValkyrienComputersConfig.Server.COMPUTERCRAFT.RADARSETTINGS;
+import net.techtastic.vc.integrations.cc.ComputerCraftBlocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
@@ -45,10 +45,7 @@ public class RadarPeripheral implements IPeripheral {
 
 	@Override
 	public boolean equals(@Nullable IPeripheral iPeripheral) {
-		if (ValkyrienComputersBlocks.INSTANCE.getRADAR() != null) {
-			return level.getBlockState(pos).is(ValkyrienComputersBlocks.INSTANCE.getRADAR().get());
-		}
-		return false;
+		return level.getBlockState(pos).is(ComputerCraftBlocks.RADAR.get());
 	}
 
 	public Object[] scanForShips(Level level, BlockPos position, double radius) {
@@ -65,7 +62,7 @@ public class RadarPeripheral implements IPeripheral {
 			} else if (radius > settings.getMaxRadarRadius()) {
 				return new Object[] {"radius too big"};
 			}
-			if (!level.getBlockState(position).is(ValkyrienComputersBlocks.INSTANCE.getRADAR().get())) {
+			if (!level.getBlockState(position).is(ComputerCraftBlocks.RADAR.get())) {
 				return new Object[] {"no radar"};
 			}
 

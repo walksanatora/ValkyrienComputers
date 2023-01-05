@@ -1,4 +1,4 @@
-package net.techtastic.vc.forge.cc.valkyrienskies;
+package net.techtastic.vc.forge.integrations.cc.valkyrienskies;
 
 import dan200.computercraft.api.ComputerCraftAPI;
 

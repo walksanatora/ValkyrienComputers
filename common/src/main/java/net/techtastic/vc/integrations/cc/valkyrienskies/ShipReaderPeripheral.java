@@ -6,8 +6,8 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.techtastic.vc.ValkyrienComputersBlocks;
 import net.techtastic.vc.ValkyrienComputersConfig;
+import net.techtastic.vc.integrations.cc.ComputerCraftBlocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
@@ -215,9 +215,6 @@ public class ShipReaderPeripheral implements IPeripheral {
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        if (ValkyrienComputersBlocks.INSTANCE.getREADER() != null) {
-            return level.getBlockState(pos).is(ValkyrienComputersBlocks.INSTANCE.getREADER().get());
-        }
-        return false;
+        return level.getBlockState(pos).is(ComputerCraftBlocks.READER.get());
     }
 }

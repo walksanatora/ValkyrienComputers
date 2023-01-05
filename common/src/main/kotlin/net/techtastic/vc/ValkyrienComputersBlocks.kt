@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
+import net.techtastic.vc.integrations.cc.ComputerCraftBlocks
 import net.techtastic.vc.registry.DeferredRegister
 import net.techtastic.vc.registry.RegistrySupplier
 
@@ -19,11 +20,12 @@ object ValkyrienComputersBlocks {
     //val BEARING_TOP = BLOCKS.register("bearing_top", ::BearingTopBlock)
     // endregion
 
-    var RADAR = if (Platform.getMod("computercraft") != null) BLOCKS.register("radar_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
+    //var RADAR = if (Platform.isModLoaded("computercraft")) BLOCKS.register("radar_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
 
-    var READER = if (Platform.getMod("computercraft") != null) BLOCKS.register("reader_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
+    //var READER = if (Platform.isModLoaded("computercraft")) BLOCKS.register("reader_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
 
     fun register() {
+        if (Platform.isModLoaded("computercraft")) ComputerCraftBlocks.registerCCBlocks()
         BLOCKS.applyAll()
     }
 

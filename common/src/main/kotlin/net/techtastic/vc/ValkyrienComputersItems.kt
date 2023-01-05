@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.techtastic.vc.integrations.cc.ComputerCraftBlocks
 import net.techtastic.vc.registry.CreativeTabs
 import net.techtastic.vc.registry.DeferredRegister
 import net.techtastic.vc.registry.RegistrySupplier
@@ -24,6 +25,7 @@ object ValkyrienComputersItems {
 
     fun register() {
         ValkyrienComputersBlocks.registerItems(ITEMS)
+        if (Platform.isModLoaded("computercraft")) ComputerCraftBlocks.registerItems(ITEMS)
         ITEMS.applyAll()
     }
 

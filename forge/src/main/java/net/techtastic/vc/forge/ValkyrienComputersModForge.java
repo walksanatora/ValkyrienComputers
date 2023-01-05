@@ -1,6 +1,5 @@
 package net.techtastic.vc.forge;
 
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.techtastic.vc.ValkyrienComputersMod;
 import net.minecraftforge.fml.common.Mod;
@@ -12,10 +11,9 @@ import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.techtastic.vc.forge.cc.eureka.EurekaPeripheralProviders;
-import net.techtastic.vc.forge.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
+import net.techtastic.vc.forge.integrations.cc.eureka.EurekaPeripheralProviders;
+import net.techtastic.vc.forge.integrations.cc.valkyrienskies.ValkyrienComputersPeripheralProviders;
 import org.valkyrienskies.core.impl.config.VSConfigClass;
-import net.techtastic.vc.ValkyrienComputersBlockEntities;
 import net.techtastic.vc.ValkyrienComputersConfig;
 //import net.techtastic.vc.block.WoodType;
 //import net.techtastic.vc.blockentity.renderer.ShipHelmBlockEntityRenderer;
