@@ -4,23 +4,26 @@ import dev.architectury.platform.Platform
 import net.minecraft.core.Registry
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
-import net.techtastic.vc.integrations.cc.ComputerCraftBlocks
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.Material
 import net.techtastic.vc.registry.DeferredRegister
+import net.techtastic.vc.registry.RegistrySupplier
 
 @Suppress("unused")
 object ValkyrienComputersBlocks {
-    val BLOCKS = DeferredRegister.create(ValkyrienComputersMod.MOD_ID, Registry.BLOCK_REGISTRY)
+    private val BLOCKS = DeferredRegister.create(ValkyrienComputersMod.MOD_ID, Registry.BLOCK_REGISTRY)
 
     //val FARTER = BLOCKS.register("farter", ::FartBlock)
     //val BEARING = BLOCKS.register("bearing", ::BearingBaseBlock)
     //val BEARING_TOP = BLOCKS.register("bearing_top", ::BearingTopBlock)
     // endregion
 
-    fun register() {
-        if (Platform.getMod("computercraft") != null) {
-            ComputerCraftBlocks.registerCCBlocks(BLOCKS)
-        }
+    var RADAR = if (Platform.getMod("computercraft") != null) BLOCKS.register("radar_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
 
+    var READER = if (Platform.getMod("computercraft") != null) BLOCKS.register("reader_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
+
+    fun register() {
         BLOCKS.applyAll()
     }
 

@@ -2,13 +2,12 @@ package net.techtastic.vc.integrations.cc.valkyrienskies;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.techtastic.vc.ValkyrienComputersBlocks;
 import net.techtastic.vc.ValkyrienComputersConfig;
-import net.techtastic.vc.integrations.cc.ComputerCraftBlocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
@@ -76,7 +75,7 @@ public class ShipReaderPeripheral implements IPeripheral {
         if (!level.isClientSide()) {
             ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) level, pos);
             if (ship != null) {
-                return ship.getInertiaData().getShipMass();
+                return ship.getInertiaData().getMass();
             } else {
                 throw new LuaException("Not on a Ship");
             }
@@ -216,6 +215,9 @@ public class ShipReaderPeripheral implements IPeripheral {
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return level.getBlockState(pos).is(ComputerCraftBlocks.READER.get());
+        if (ValkyrienComputersBlocks.INSTANCE.getREADER() != null) {
+            return level.getBlockState(pos).is(ValkyrienComputersBlocks.INSTANCE.getREADER().get());
+        }
+        return false;
     }
 }

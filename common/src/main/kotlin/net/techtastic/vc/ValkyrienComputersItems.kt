@@ -1,5 +1,6 @@
 package net.techtastic.vc
 
+import dev.architectury.platform.Platform
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
