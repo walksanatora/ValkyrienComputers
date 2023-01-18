@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GLG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:gold_ingots"
+    },
+    "L": {
+      "item": "minecraft:lectern"
+    }
+  },
+  "result": {
+    "item": "vc:reader_cc"
+  }
+}

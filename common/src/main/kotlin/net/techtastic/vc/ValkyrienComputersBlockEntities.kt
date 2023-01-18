@@ -1,5 +1,6 @@
 package net.techtastic.vc
 
+import dev.architectury.platform.Platform
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
@@ -8,6 +9,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.techtastic.vc.integrations.cc.ComputerCraftBlockEntities
 import net.techtastic.vc.registry.DeferredRegister
 import net.techtastic.vc.registry.RegistrySupplier
 
@@ -19,6 +21,7 @@ object ValkyrienComputersBlockEntities {
     //val BEARING = ValkyrienComputersBlocks.BEARING withBE ::BearingBlockEntity byName "bearing"
 
     fun register() {
+        if (Platform.isModLoaded("computercraft")) ComputerCraftBlockEntities.registerBlockEntities()
         BLOCKENTITIES.applyAll()
     }
 

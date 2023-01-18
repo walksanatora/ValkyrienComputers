@@ -21,7 +21,7 @@ import org.valkyrienskies.mod.fabric.common.ValkyrienSkiesModFabric;
 public class ValkyrienComputersModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        // force VS2 to load before takeoff
+        // force VS2 to load before vc
         new ValkyrienSkiesModFabric().onInitialize();
 
         FabricLoader loader = FabricLoader.getInstance();

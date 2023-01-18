@@ -15,15 +15,6 @@ import net.techtastic.vc.registry.RegistrySupplier
 object ValkyrienComputersBlocks {
     private val BLOCKS = DeferredRegister.create(ValkyrienComputersMod.MOD_ID, Registry.BLOCK_REGISTRY)
 
-    //val FARTER = BLOCKS.register("farter", ::FartBlock)
-    //val BEARING = BLOCKS.register("bearing", ::BearingBaseBlock)
-    //val BEARING_TOP = BLOCKS.register("bearing_top", ::BearingTopBlock)
-    // endregion
-
-    //var RADAR = if (Platform.isModLoaded("computercraft")) BLOCKS.register("radar_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
-
-    //var READER = if (Platform.isModLoaded("computercraft")) BLOCKS.register("reader_cc") { Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)) } else null
-
     fun register() {
         if (Platform.isModLoaded("computercraft")) ComputerCraftBlocks.registerCCBlocks()
         BLOCKS.applyAll()

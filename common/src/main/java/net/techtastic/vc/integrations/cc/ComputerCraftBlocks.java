@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.techtastic.vc.ValkyrienComputersItems;
 import net.techtastic.vc.ValkyrienComputersMod;
+import net.techtastic.vc.block.MotorBaseBlock;
+import net.techtastic.vc.block.MotorTopBlock;
 import net.techtastic.vc.registry.DeferredRegister;
 import net.techtastic.vc.registry.RegistrySupplier;
 
@@ -18,6 +20,9 @@ public class ComputerCraftBlocks {
 
     public static RegistrySupplier<Block> READER = BLOCKS.register("reader_cc", () -> new Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
+    //public static RegistrySupplier<Block> MOTOR = BLOCKS.register("motor_cc", () -> new MotorBaseBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
+
+    //public static RegistrySupplier<Block> MOTOR_TOP = BLOCKS.register("motor_top_cc", () -> new MotorTopBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
     public static void registerCCBlocks() {
         BLOCKS.applyAll();
