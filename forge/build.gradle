@@ -58,7 +58,7 @@ dependencies {
     modApi("org.valkyrienskies:valkyrienskies-118-forge:${rootProject.vs2_version}") { transitive = false }
     implementation("org.valkyrienskies.core:api:1.1.0+854f172484") { transitive = false }
 
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    include(modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
