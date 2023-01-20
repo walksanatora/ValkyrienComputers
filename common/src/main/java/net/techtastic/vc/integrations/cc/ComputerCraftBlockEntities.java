@@ -14,8 +14,8 @@ public class ComputerCraftBlockEntities {
     private static DeferredRegister<BlockEntityType<?>> BLOCKENTITIES = DeferredRegister.Companion.create(ValkyrienComputersMod.MOD_ID, Registry.BLOCK_ENTITY_TYPE_REGISTRY);
 
     public static RegistrySupplier<BlockEntityType> MOTOR = BLOCKENTITIES.register("motor_cc", () -> BlockEntityType.Builder.of(
-            MotorBlockEntity::new, Blocks.AIR
-            //ComputerCraftBlocks.MOTOR.get()
+            MotorBlockEntity::new,
+            ComputerCraftBlocks.MOTOR.get()
     ).build(null));
 
     public static void registerBlockEntities() {

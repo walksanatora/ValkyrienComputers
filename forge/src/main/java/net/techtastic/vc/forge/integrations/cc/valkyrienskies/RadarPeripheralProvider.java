@@ -21,6 +21,6 @@ public class RadarPeripheralProvider implements IPeripheralProvider {
 		) {
 			return LazyOptional.of( () -> new RadarPeripheral(level, blockPos));
 		}
-		return null;
+		return LazyOptional.empty();
 	}
 }

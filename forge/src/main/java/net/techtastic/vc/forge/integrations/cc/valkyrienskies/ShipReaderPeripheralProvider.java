@@ -21,6 +21,6 @@ public class ShipReaderPeripheralProvider implements IPeripheralProvider {
         ) {
             return LazyOptional.of( () -> new ShipReaderPeripheral(level, blockPos));
         }
-        return null;
+        return LazyOptional.empty();
     }
 }

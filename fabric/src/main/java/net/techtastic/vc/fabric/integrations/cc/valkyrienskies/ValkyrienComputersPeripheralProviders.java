@@ -6,6 +6,6 @@ public class ValkyrienComputersPeripheralProviders {
 	public static void registerPeripheralProviders() {
 		ComputerCraftAPI.registerPeripheralProvider(new RadarPeripheralProvider());
 		ComputerCraftAPI.registerPeripheralProvider(new ShipReaderPeripheralProvider());
-		//ComputerCraftAPI.registerPeripheralProvider(new MotorPeripheralProvider());
+		ComputerCraftAPI.registerPeripheralProvider(new MotorPeripheralProvider());
 	}
 }

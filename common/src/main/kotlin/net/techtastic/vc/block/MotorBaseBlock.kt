@@ -49,10 +49,19 @@ class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, isMoving: Boolean) {
         super.onPlace(state, level, pos, oldState, isMoving)
 
-        /*if (level is ServerLevel) {
-            var be = level.getBlockEntity(pos) as MotorBlockEntity
+        if (level is ServerLevel) {
+            val be = level.getBlockEntity(pos) as MotorBlockEntity
             be.makeOrGetTop(level, pos)
-        }*/
+        }
+    }
+
+    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
+        super.onRemove(state, level, pos, newState, isMoving)
+
+        if (level is ServerLevel) {
+            val be = level.getBlockEntity(pos) as MotorBlockEntity
+            be.destroyConstraints()
+        }
     }
 
     override fun getRenderShape(blockState: BlockState): RenderShape {
@@ -63,7 +72,16 @@ class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
         return MOTOR_BASE_SHAPE[state.getValue(BlockStateProperties.FACING)]
     }
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? {
-        return MotorBlockEntity(pos, state)
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? =
+            MotorBlockEntity(pos, state)
+
+    override fun <T : BlockEntity> getTicker(level: Level, state: BlockState, blockEntityType: BlockEntityType<T>): BlockEntityTicker<T> =
+    BlockEntityTicker { level: Level?, pos : BlockPos?, state : BlockState?, blockEntity ->
+        if (level != null) {
+            if (level.isClientSide) return@BlockEntityTicker
+        }
+        if (blockEntity is MotorBlockEntity) {
+            blockEntity.tick(level, pos, state, blockEntity)
+        }
     }
 }

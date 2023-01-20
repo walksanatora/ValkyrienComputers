@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class MotorPeripheralProvider implements IPeripheralProvider {
 	@Override
 	public IPeripheral getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-		/*if (
+		if (
 				level.getBlockState(blockPos).is(ComputerCraftBlocks.MOTOR.get())
 		) {
 			return new MotorPeripheral(level, blockPos);
-		}*/
+		}
 		return null;
 	}
 }

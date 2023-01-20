@@ -20,9 +20,9 @@ public class ComputerCraftBlocks {
 
     public static RegistrySupplier<Block> READER = BLOCKS.register("reader_cc", () -> new Block(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
-    //public static RegistrySupplier<Block> MOTOR = BLOCKS.register("motor_cc", () -> new MotorBaseBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
+    public static RegistrySupplier<Block> MOTOR = BLOCKS.register("motor_cc", () -> new MotorBaseBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
-    //public static RegistrySupplier<Block> MOTOR_TOP = BLOCKS.register("motor_top_cc", () -> new MotorTopBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
+    public static RegistrySupplier<Block> MOTOR_TOP = BLOCKS.register("motor_top_cc", () -> new MotorTopBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
     public static void registerCCBlocks() {
         BLOCKS.applyAll();
@@ -30,7 +30,9 @@ public class ComputerCraftBlocks {
 
     public static void registerItems(DeferredRegister<Item> items) {
         for (RegistrySupplier<Block> block : BLOCKS) {
-            items.register(block.getName(), () -> new BlockItem(block.get(), new Item.Properties().tab(ValkyrienComputersItems.INSTANCE.getTAB())));
+            if (!block.equals(MOTOR_TOP)) {
+                items.register(block.getName(), () -> new BlockItem(block.get(), new Item.Properties().tab(ValkyrienComputersItems.INSTANCE.getTAB())));
+            }
         }
     }
 }

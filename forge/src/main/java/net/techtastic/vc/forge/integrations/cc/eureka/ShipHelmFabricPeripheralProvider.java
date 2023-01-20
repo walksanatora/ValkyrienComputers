@@ -18,6 +18,6 @@ public class ShipHelmFabricPeripheralProvider implements IPeripheralProvider {
         ) {
             return LazyOptional.of( () -> new ShipHelmPeripheral(level, blockPos));
         }
-        return null;
+        return LazyOptional.empty();
     }
 }
