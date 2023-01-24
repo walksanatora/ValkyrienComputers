@@ -1,9 +1,6 @@
 package net.techtastic.vc.integrations.cc;
 
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
-import net.minecraft.util.datafix.fixes.References;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.techtastic.vc.ValkyrienComputersMod;
 import net.techtastic.vc.blockentity.MotorBlockEntity;

@@ -13,12 +13,12 @@
     "facing=west": {
       "model": "vc:block/motor_base",
       "x": 90,
-      "y": 90
+      "y": 270
     },
     "facing=east": {
       "model": "vc:block/motor_base",
       "x": 90,
-      "y": 270
+      "y": 90
     },
     "facing=south": {
       "model": "vc:block/motor_base",

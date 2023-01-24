@@ -6,12 +6,12 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.HitResult
 import net.techtastic.vc.integrations.cc.ComputerCraftBlockEntities
 import net.techtastic.vc.integrations.cc.ComputerCraftBlocks
+import net.techtastic.vc.ship.MotorTopPopoff
 import org.joml.AxisAngle4d
 import org.joml.Quaterniond
 import org.joml.Vector3d
@@ -91,15 +91,9 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
 
     fun <T : BlockEntity?> tick(level: Level?, pos: BlockPos?, state: BlockState?, be: T) {
         if (level?.shipObjectWorld != null && !level.isClientSide) {
-            System.err.println("ShipObjectWorld not null and Level not Clientside")
             val level = level as ServerLevel
 
             if (motorId != null && shipIds != null) {
-                val targetShips = level.transformToNearbyShipsAndWorld(otherPos?.x!!.toDouble() + 0.5, otherPos?.y!!.toDouble() + 0.5, otherPos?.z!!.toDouble() + 0.5, 1.0)
-                if (targetShips.isEmpty()) {
-                    System.err.println("TargetShips is empty")
-                    return
-                }
                 val shipId = shipIds!![0]
                 val otherShipId = shipIds!![1]
                 val lookingTowards = blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD()
@@ -110,19 +104,17 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
                 else
                     Quaterniond(AxisAngle4d(lookingTowards.angle(x), xCross.normalize()))
 
-                System.err.println("Current Angle: $currentAngle")
-
                 val otherShip = level.shipObjectWorld.loadedShips.getById(otherShipId)
                 if (otherShip != null && activated) {
 
-                    if (reversed) {
-                        currentAngle = if (currentAngle > 0.0) {
+                    currentAngle = if (reversed) {
+                        if (currentAngle > 0.0) {
                             currentAngle - 0.0174533
                         } else {
                             2 * Math.PI
                         }
                     } else {
-                        currentAngle = if (currentAngle < 2 * Math.PI) {
+                        if (currentAngle < 2 * Math.PI) {
                             currentAngle + 0.0174533
                         } else {
                             0.0
@@ -140,6 +132,34 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
                 }
             }
         }
+    }
+
+    fun setOffset(offset : Double) {
+        var level = level as ServerLevel
+
+        if (motorId != null && shipIds != null) {
+            val shipId = shipIds!![0]
+            val otherShipId = shipIds!![1]
+
+            val attachmentConstraint = VSAttachmentConstraint(
+                    shipId, otherShipId, constraintComplience, basePoint(), otherPoint()!!,
+                    maxForce, offset
+            )
+
+            attachmentConstraintId = level.shipObjectWorld.createNewConstraint(attachmentConstraint)
+            this.setChanged()
+        }
+    }
+
+    fun popOffTop() {
+        var level = level as ServerLevel
+        var ship = otherPos?.let { level.getShipManagingPos(it) }
+        var popoff = MotorTopPopoff()
+        popoff.forceVec = otherPos?.let { level.getBlockState(it).getValue(BlockStateProperties.FACING).normal.toJOMLD() }?.mul(100.0)
+
+        destroyConstraints()
+
+        ship?.saveAttachment(MotorTopPopoff::class.java, popoff)
     }
 
     fun makeOrGetTop(level: ServerLevel, pos: BlockPos) {
@@ -184,7 +204,7 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
             val towards = blockState.getValue(BlockStateProperties.FACING)
             val topPos = shipCenterPos.offset(towards.normal)
 
-            level.setBlock(topPos, ComputerCraftBlocks.MOTOR_TOP.get().defaultBlockState()
+            level.setBlock(topPos, ComputerCraftBlocks.TOP.get().defaultBlockState()
                     .setValue(BlockStateProperties.FACING, towards), 11)
 
             topPos to otherShip
@@ -192,11 +212,12 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
             level.getShipObjectManagingPos(clipResult.blockPos)?.let { otherShip ->
                 val otherPos = clipResult.blockPos.offset(blockState.getValue(BlockStateProperties.FACING).opposite.normal)
 
-                level.setBlock(
-                        otherPos, ComputerCraftBlocks.MOTOR_TOP.get().defaultBlockState().setValue(
-                        BlockStateProperties.FACING, blockState.getValue(BlockStateProperties.FACING).opposite
-                ), 11
-                )
+                if (!level.getBlockState(otherPos).`is`(ComputerCraftBlocks.TOP.get())) {
+                    level.setBlock(
+                            otherPos, ComputerCraftBlocks.TOP.get().defaultBlockState().setValue(
+                            BlockStateProperties.FACING, blockState.getValue(BlockStateProperties.FACING)
+                    ), 11)
+                }
 
                 otherPos to otherShip
             } ?: (clipResult.blockPos to null)
@@ -208,7 +229,6 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
 
     fun createConstraints(otherShip: ServerShip? = null): Boolean {
         if (otherPos != null && level != null
-                && motorId == null
                 && !level!!.isClientSide) {
             val level = level as ServerLevel
             val shipId = level.getShipObjectManagingPos(blockPos)?.id ?: level.shipObjectWorld.dimensionToGroundBodyIdImmutable[level.dimensionId]!!
@@ -244,9 +264,9 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
 
             motorId = motorConstraint?.let { level.shipObjectWorld.createNewConstraint(it) }
             shipIds = listOf(shipId, otherShipId)
-            this.setChanged()
             hingeId = level.shipObjectWorld.createNewConstraint(hingeConstraint)
             attachmentConstraintId = level.shipObjectWorld.createNewConstraint(attachmentConstraint)
+            this.setChanged()
             return true
         }
 
@@ -258,9 +278,12 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
             val level = level as ServerLevel
             motorId?.let { level.shipObjectWorld.removeConstraint(it) }
             shipIds = null
-            this.setChanged()
+            currentAngle = 0.0
             hingeId?.let { level.shipObjectWorld.removeConstraint(it) }
             attachmentConstraintId?.let { level.shipObjectWorld.removeConstraint(it) }
+            otherPos = null
+
+            this.setChanged()
         }
     }
 
@@ -273,7 +296,7 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
             ?.add(blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD().mul(0.5))
 
     companion object {
-        private val baseOffset = 0.5
+        private val baseOffset = 0.0
         private val constraintComplience = 1e-10
         private val maxForce = 1e10
     }

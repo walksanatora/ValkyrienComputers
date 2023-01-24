@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.techtastic.vc.ship.ApplyThrust;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.valkyrienskies.core.api.ships.ServerShip;
@@ -16,6 +17,8 @@ import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity;
 import org.valkyrienskies.eureka.ship.EurekaShipControl;
 import org.valkyrienskies.mod.api.SeatedControllingPlayer;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
+
+import java.util.List;
 
 public class ShipHelmPeripheral implements IPeripheral {
     private Level world;
@@ -46,7 +49,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean impluseLeft(int ticks) throws LuaException {
+    public final boolean impulseLeft(int ticks) throws LuaException {
         return applyThrust("left", ticks);
     }
 
@@ -315,60 +318,12 @@ public class ShipHelmPeripheral implements IPeripheral {
         if (ship != null) { //Is The Peripheral on a Ship?
             EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
             if (control != null) { //Is the Ship being controlled by Eureka?
-                SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
-                if (fakePlayer == null) { //Is there a SeatedControllingPlayer already?
-                    fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
-                    ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
-                }
+                ApplyThrust at = ship.getAttachment(ApplyThrust.class);
+                if (at == null) at = new ApplyThrust();
 
-                long originTime = world.getGameTime();
-                int ticks = 0;
-                while (ticks < gameTicks) {
-                    //If one tick of time has passed, set originTime to current and increment ticks
-                    if (world.getGameTime() - originTime == 1) {
-                        originTime = world.getGameTime();
-                        ticks++;
-                    }
+                at.set(world, pos, direction, gameTicks);
 
-                    switch (direction) {
-                        case "forward": //Move Ship Forward
-                            fakePlayer.setForwardImpulse(1.0f);
-                            break;
-                        case "left": //Turn Ship Left
-                            fakePlayer.setLeftImpulse(1.0f);
-                            break;
-                        case "right": //Turn Ship Right
-                            fakePlayer.setLeftImpulse(-1.0f);
-                            break;
-                        case "back": //Move Ship Backward
-                            fakePlayer.setForwardImpulse(-1.0f);
-                            break;
-                        case "up": //Move Ship Upward
-                            fakePlayer.setUpImpulse(1.0f);
-                            break;
-                        default: //Move Ship Downward
-                            fakePlayer.setUpImpulse(-1.0f);
-                            break;
-                    }
-
-                    ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
-                }
-
-                switch (direction) {
-                    case "forward":
-                    case "back": //Reset Forward/Backward Impulse
-                        fakePlayer.setForwardImpulse(0.0f);
-                        break;
-                    case "left":
-                    case "right": //Reset Left/Right Impulse
-                        fakePlayer.setLeftImpulse(0.0f);
-                        break;
-                    default: //Reset Up/Down Impulse
-                        fakePlayer.setUpImpulse(0.0f);
-                        break;
-                }
-
-                ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+                ship.saveAttachment(ApplyThrust.class, at);
 
                 return true;
             } else {
@@ -378,4 +333,6 @@ public class ShipHelmPeripheral implements IPeripheral {
             throw new LuaException("no ship");
         }
     }
+
+
 }

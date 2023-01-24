@@ -18,17 +18,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.techtastic.vc.blockentity.MotorBlockEntity
-import net.techtastic.vc.integrations.cc.ComputerCraftBlockEntities
 import net.techtastic.vc.util.DirectionalShape
 import net.techtastic.vc.util.RotShapes
 
 class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
     val MOTOR_BASE = RotShapes.or(
-            RotShapes.box(0.0, 4.0, 6.0, 6.0, 8.0, 10.0),
-            RotShapes.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
-            RotShapes.box(0.0, 4.0, 10.0, 16.0, 8.0, 16.0),
-            RotShapes.box(0.0, 4.0, 0.0, 16.0, 8.0, 6.0),
-            RotShapes.box(10.0, 4.0, 6.0, 16.0, 8.0, 10.0)
+            RotShapes.box(0.0, 0.0, 0.0, 16.0, 11.0, 16.0)
     )
 
     val MOTOR_BASE_SHAPE = DirectionalShape.up(MOTOR_BASE)
@@ -43,7 +38,7 @@ class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
 
     override fun getStateForPlacement(ctx: BlockPlaceContext): BlockState {
         return defaultBlockState()
-                .setValue(BlockStateProperties.FACING, ctx.clickedFace)
+                .setValue(BlockStateProperties.FACING, ctx.nearestLookingDirection.opposite)
     }
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, isMoving: Boolean) {
@@ -56,12 +51,12 @@ class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        super.onRemove(state, level, pos, newState, isMoving)
-
         if (level is ServerLevel) {
             val be = level.getBlockEntity(pos) as MotorBlockEntity
             be.destroyConstraints()
         }
+
+        super.onRemove(state, level, pos, newState, isMoving)
     }
 
     override fun getRenderShape(blockState: BlockState): RenderShape {
