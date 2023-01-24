@@ -1,5 +1,6 @@
 package net.techtastic.vc
 
+import dan200.computercraft.api.ComputerCraftAPI
 import net.minecraft.resources.ResourceLocation
 import org.valkyrienskies.core.impl.config.VSConfigClass
 

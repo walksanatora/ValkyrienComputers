@@ -1,78 +1,43 @@
 {
 	"credit": "Made with Blockbench",
+	"textures": {
+		"1": "computercraft:block/computer_advanced_top",
+		"2": "vc:block/motor_base_top_cc",
+		"3": "vc:block/motor_side_cc"
+	},
 	"elements": [
 		{
-			"from": [0, 4, 6],
-			"to": [6, 8, 10],
-			"color": 1,
-			"faces": {
-				"north": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"east": {"uv": [0, 0, 4, 4], "texture": "#missing"},
-				"south": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"west": {"uv": [0, 0, 4, 4], "texture": "#missing"},
-				"up": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"down": {"uv": [0, 0, 6, 4], "texture": "#missing"}
-			}
-		},
-		{
 			"from": [0, 0, 0],
-			"to": [16, 4, 16],
-			"color": 3,
+			"to": [16, 12, 16],
 			"faces": {
-				"north": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"east": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"south": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"west": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#missing"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#missing"}
-			}
-		},
-		{
-			"from": [0, 4, 10],
-			"to": [16, 8, 16],
-			"color": 1,
-			"faces": {
-				"north": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"east": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"south": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"west": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"up": {"uv": [0, 0, 16, 6], "texture": "#missing"},
-				"down": {"uv": [0, 0, 16, 6], "texture": "#missing"}
-			}
-		},
-		{
-			"from": [0, 4, 0],
-			"to": [16, 8, 6],
-			"color": 1,
-			"faces": {
-				"north": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"east": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"south": {"uv": [0, 0, 16, 4], "texture": "#missing"},
-				"west": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"up": {"uv": [0, 0, 16, 6], "texture": "#missing"},
-				"down": {"uv": [0, 0, 16, 6], "texture": "#missing"}
-			}
-		},
-		{
-			"from": [10, 4, 6],
-			"to": [16, 8, 10],
-			"color": 1,
-			"faces": {
-				"north": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"east": {"uv": [0, 0, 4, 4], "texture": "#missing"},
-				"south": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"west": {"uv": [0, 0, 4, 4], "texture": "#missing"},
-				"up": {"uv": [0, 0, 6, 4], "texture": "#missing"},
-				"down": {"uv": [0, 0, 6, 4], "texture": "#missing"}
+				"north": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#2"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#1"}
 			}
 		}
 	],
 	"groups": [
 		{
-			"name": "base",
-			"origin": [0, 0, 0],
+			"name": "VoxelShapes",
+			"origin": [8, 8, 8],
 			"color": 0,
-			"children": [0, 1, 2, 3, 4]
+			"children": [
+				{
+					"name": "top",
+					"origin": [0, 0, 0],
+					"color": 0,
+					"children": []
+				},
+				{
+					"name": "base",
+					"origin": [0, 0, 0],
+					"color": 0,
+					"children": [0]
+				}
+			]
 		}
 	]
 }

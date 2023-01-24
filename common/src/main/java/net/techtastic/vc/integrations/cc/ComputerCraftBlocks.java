@@ -9,7 +9,7 @@ import net.minecraft.world.level.material.Material;
 import net.techtastic.vc.ValkyrienComputersItems;
 import net.techtastic.vc.ValkyrienComputersMod;
 import net.techtastic.vc.block.MotorBaseBlock;
-import net.techtastic.vc.block.MotorTopBlock;
+import net.techtastic.vc.block.TopBlock;
 import net.techtastic.vc.registry.DeferredRegister;
 import net.techtastic.vc.registry.RegistrySupplier;
 
@@ -22,7 +22,7 @@ public class ComputerCraftBlocks {
 
     public static RegistrySupplier<Block> MOTOR = BLOCKS.register("motor_cc", () -> new MotorBaseBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
-    public static RegistrySupplier<Block> MOTOR_TOP = BLOCKS.register("motor_top_cc", () -> new MotorTopBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
+    public static RegistrySupplier<Block> TOP = BLOCKS.register("top_cc", () -> new TopBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2.0f)));
 
     public static void registerCCBlocks() {
         BLOCKS.applyAll();
@@ -30,7 +30,7 @@ public class ComputerCraftBlocks {
 
     public static void registerItems(DeferredRegister<Item> items) {
         for (RegistrySupplier<Block> block : BLOCKS) {
-            if (!block.equals(MOTOR_TOP)) {
+            if (!block.equals(TOP)) {
                 items.register(block.getName(), () -> new BlockItem(block.get(), new Item.Properties().tab(ValkyrienComputersItems.INSTANCE.getTAB())));
             }
         }

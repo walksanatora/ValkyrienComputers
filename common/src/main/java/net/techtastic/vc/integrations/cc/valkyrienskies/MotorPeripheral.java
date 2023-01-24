@@ -14,17 +14,19 @@ import org.jetbrains.annotations.Nullable;
 public class MotorPeripheral implements IPeripheral {
 	private Level level;
 	private BlockPos pos;
+	private MotorBlockEntity motor;
 
-	public MotorPeripheral(Level level, BlockPos worldPosition) {
-		this.level = level;
-		this.pos = worldPosition;
+	public MotorPeripheral(MotorBlockEntity be) {
+		this.motor = be;
+		this.level = be.getLevel();
+		this.pos = be.getBlockPos();
 	}
 
 	@LuaFunction
 	public final boolean activate() throws LuaException {
 		if (level.isClientSide()) return false;
-		if (!(level.getBlockEntity(pos) instanceof MotorBlockEntity motor)) return false;
 
+		doesMotorStillExist();
 		if (motor.getActivated()) {
 			motor.setActivated(false);
 			return true;
@@ -36,8 +38,8 @@ public class MotorPeripheral implements IPeripheral {
 	@LuaFunction
 	public final boolean reverse() throws LuaException {
 		if (level.isClientSide()) return false;
-		if (!(level.getBlockEntity(pos) instanceof MotorBlockEntity motor)) return false;
 
+		doesMotorStillExist();
 		if (motor.getReversed()) {
 			motor.setReversed(false);
 			return true;
@@ -49,19 +51,18 @@ public class MotorPeripheral implements IPeripheral {
 	@LuaFunction
 	public final boolean removeHead() throws LuaException {
 		if (level.isClientSide()) return false;
-		if (!(level.getBlockEntity(pos) instanceof MotorBlockEntity motor)) return false;
 		if (motor.getHingeId() == null) return false;
 
-		motor.destroyConstraints();
+		doesMotorStillExist();
+		motor.popOffTop();
 		return true;
 	}
 
 	@LuaFunction
 	public final boolean createHead() throws LuaException {
 		if (level.isClientSide()) return false;
-		if (!(level.getBlockEntity(pos) instanceof MotorBlockEntity motor)) return false;
-		if (motor.getHingeId() != null) return false;
 
+		doesMotorStillExist();
 		motor.makeOrGetTop((ServerLevel) level, pos);
 		return true;
 	}
@@ -69,11 +70,8 @@ public class MotorPeripheral implements IPeripheral {
 	@LuaFunction
 	public final double getAngle() throws LuaException {
 		if (level.isClientSide()) return 0.0;
-		System.err.println("We are Serverside!!!");
-		System.err.println("BlockEntity: " + level.getBlockEntity(pos));
-		if (!(level.getBlockEntity(pos) instanceof MotorBlockEntity motor)) return 0.0;
-		System.err.println("Motor exists!!!!!");
 
+		doesMotorStillExist();
 		return motor.getCurrentAngle();
 	}
 
@@ -86,5 +84,9 @@ public class MotorPeripheral implements IPeripheral {
 	@Override
 	public boolean equals(@Nullable IPeripheral iPeripheral) {
 		return level.getBlockState(pos).is(ComputerCraftBlocks.MOTOR.get());
+	}
+
+	public void doesMotorStillExist() {
+		motor.setChanged();
 	}
 }
