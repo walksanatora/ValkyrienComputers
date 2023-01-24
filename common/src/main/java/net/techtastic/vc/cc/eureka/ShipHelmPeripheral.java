@@ -1,4 +1,4 @@
-package net.techtastic.vc.fabric.integrations.cc.eureka;
+package net.techtastic.vc.cc.eureka;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -46,7 +46,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean impluseLeft(int ticks) throws LuaException {
+    public final boolean impulseLeft(int ticks) throws LuaException {
         return applyThrust("left", ticks);
     }
 

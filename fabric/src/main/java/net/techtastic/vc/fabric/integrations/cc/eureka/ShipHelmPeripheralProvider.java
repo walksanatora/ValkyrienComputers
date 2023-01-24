@@ -5,10 +5,11 @@ import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.techtastic.vc.cc.eureka.ShipHelmPeripheral;
 import org.jetbrains.annotations.NotNull;
 import org.valkyrienskies.eureka.block.ShipHelmBlock;
 
-public class ShipHelmFabricPeripheralProvider implements IPeripheralProvider {
+public class ShipHelmPeripheralProvider implements IPeripheralProvider {
     @NotNull
     @Override
     public IPeripheral getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {

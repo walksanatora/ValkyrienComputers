@@ -6,6 +6,15 @@ loom {
     accessWidenerPath = file("src/main/resources/vc.accesswidener")
 }
 
+repositories {
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
@@ -22,6 +31,9 @@ dependencies {
 
     // CC Restitched
     modCompileOnly("curse.maven:cc-restitched-462672:3622561")
+
+    // Eureka
+    modCompileOnly("org.valkyrienskies:eureka-116-common:1.1.0-alpha5")
 }
 
 publishing {

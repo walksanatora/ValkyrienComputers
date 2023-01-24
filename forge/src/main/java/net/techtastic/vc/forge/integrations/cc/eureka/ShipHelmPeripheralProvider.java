@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
+import net.techtastic.vc.cc.eureka.ShipHelmPeripheral;
 import org.jetbrains.annotations.NotNull;
 import org.valkyrienskies.eureka.block.ShipHelmBlock;
 

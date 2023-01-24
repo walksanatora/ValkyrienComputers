@@ -28,7 +28,6 @@ repositories {
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
 
-    // CC Tweaked
     maven {
         url "https://cursemaven.com"
         content {

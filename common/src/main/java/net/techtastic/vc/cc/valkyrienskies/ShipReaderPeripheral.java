@@ -1,4 +1,4 @@
-package net.techtastic.vc.fabric.integrations.cc.valkyrienskies;
+package net.techtastic.vc.cc.valkyrienskies;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
