@@ -33,7 +33,7 @@ dependencies {
     modCompileOnly("curse.maven:cc-restitched-462672:3622561")
 
     // Eureka
-    modCompileOnly("org.valkyrienskies:eureka-116-common:1.1.0-alpha5")
+    modCompileOnly("org.valkyrienskies.eureka:eureka-common:1.0.0-alpha7+becad9c75a")
 }
 
 publishing {
