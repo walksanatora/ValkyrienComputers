@@ -30,9 +30,10 @@ public class ComputerCraftBlocks {
 
     public static void registerItems(DeferredRegister<Item> items) {
         for (RegistrySupplier<Block> block : BLOCKS) {
-            if (!block.equals(TOP)) {
-                items.register(block.getName(), () -> new BlockItem(block.get(), new Item.Properties().tab(ValkyrienComputersItems.INSTANCE.getTAB())));
+            if (block.equals(TOP)) {
+                continue;
             }
+            items.register(block.getName(), () -> new BlockItem(block.get(), new Item.Properties().tab(ValkyrienComputersItems.INSTANCE.getTAB())));
         }
     }
 }

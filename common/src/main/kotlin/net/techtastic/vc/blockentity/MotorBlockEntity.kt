@@ -1,6 +1,7 @@
 package net.techtastic.vc.blockentity
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ClipContext
@@ -11,13 +12,20 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.HitResult
 import net.techtastic.vc.integrations.cc.ComputerCraftBlockEntities
 import net.techtastic.vc.integrations.cc.ComputerCraftBlocks
-import net.techtastic.vc.ship.MotorTopPopoff
+import net.techtastic.vc.ship.MotorBaseControl
+import net.techtastic.vc.ship.MotorControl
+import net.techtastic.vc.ship.MotorControlData
 import org.joml.AxisAngle4d
 import org.joml.Quaterniond
 import org.joml.Vector3d
+import org.valkyrienskies.core.api.ships.LoadedServerShip
 import org.valkyrienskies.core.api.ships.ServerShip
+import org.valkyrienskies.core.api.ships.saveAttachment
 import org.valkyrienskies.core.apigame.constraints.*
 import org.valkyrienskies.core.impl.hooks.VSEvents
+import org.valkyrienskies.core.impl.util.x
+import org.valkyrienskies.core.impl.util.y
+import org.valkyrienskies.core.impl.util.z
 import org.valkyrienskies.mod.common.*
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
@@ -26,7 +34,7 @@ import org.valkyrienskies.mod.common.world.clipIncludeShips
 import kotlin.math.roundToInt
 
 class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerCraftBlockEntities.MOTOR.get(), pos, state) {
-    var motorId : VSConstraintId? = null
+    //var motorId : VSConstraintId? = null
     var hingeId : VSConstraintId? = null
     var attachmentConstraintId : VSConstraintId? = null
     var otherPos : BlockPos? = null
@@ -34,6 +42,7 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
     var shipIds : List<Long>? = null
     var activated = false
     var reversed = false
+    private var controlData : MotorControlData? = null
 
     override fun load(tag: CompoundTag) {
         super.load(tag)
@@ -93,76 +102,44 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
         if (level?.shipObjectWorld != null && !level.isClientSide) {
             val level = level as ServerLevel
 
-            if (motorId != null && shipIds != null) {
-                val shipId = shipIds!![0]
+            if (hingeId != null && shipIds != null) {
+                //val shipId = shipIds!![0]
                 val otherShipId = shipIds!![1]
-                val lookingTowards = blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD()
+                /*val lookingTowards = blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD()
                 val x = Vector3d(1.0, 0.0, 0.0)
                 val xCross = Vector3d(lookingTowards).cross(x)
                 val hingeOrientation = if (xCross.lengthSquared() < 1e-6)
                     Quaterniond()
                 else
-                    Quaterniond(AxisAngle4d(lookingTowards.angle(x), xCross.normalize()))
+                    Quaterniond(AxisAngle4d(lookingTowards.angle(x), xCross.normalize()))*/
 
                 val otherShip = level.shipObjectWorld.loadedShips.getById(otherShipId)
-                if (otherShip != null && activated) {
+                if (otherShip != null && otherShip is LoadedServerShip) {
+                    var control = otherShip.getAttachment(MotorControl::class.java)
+                    if (control == null) control = MotorControl()
 
-                    currentAngle = if (reversed) {
-                        if (currentAngle > 0.0) {
-                            currentAngle - 0.0174533
-                        } else {
-                            2 * Math.PI
-                        }
-                    } else {
-                        if (currentAngle < 2 * Math.PI) {
-                            currentAngle + 0.0174533
-                        } else {
-                            0.0
-                        }
-                    }
+                    controlData = pos?.let { level.getBlockState(it) }?.let { generateData(it) }
+                    control.controlData = controlData
 
-                    this.setChanged()
+                    otherShip.setAttachment(MotorControl::class.java, control)
+                }
 
-                    val motorConstraint = VSHingeTargetAngleConstraint(
-                            shipId, otherShipId, constraintComplience, hingeOrientation, hingeOrientation, maxForce, currentAngle, currentAngle
-                    )
+                val ship = pos?.let { level.getShipManagingPos(it) }
+                if (ship != null && ship is LoadedServerShip) {
+                    var baseControl = ship.getAttachment(MotorBaseControl::class.java)
+                    if (baseControl == null) baseControl = MotorBaseControl()
 
-                    motorId?.let { level.shipObjectWorld.removeConstraint(it) }
-                    motorId = motorConstraint.let { level.shipObjectWorld.createNewConstraint(it) }
+                    if (controlData != null) baseControl.motorsMap[pos] = controlData!!
+
+                    ship.setAttachment(MotorBaseControl::class.java, baseControl)
                 }
             }
         }
     }
 
-    fun setOffset(offset : Double) {
-        var level = level as ServerLevel
-
-        if (motorId != null && shipIds != null) {
-            val shipId = shipIds!![0]
-            val otherShipId = shipIds!![1]
-
-            val attachmentConstraint = VSAttachmentConstraint(
-                    shipId, otherShipId, constraintComplience, basePoint(), otherPoint()!!,
-                    maxForce, offset
-            )
-
-            attachmentConstraintId = level.shipObjectWorld.createNewConstraint(attachmentConstraint)
-            this.setChanged()
-        }
-    }
-
-    fun popOffTop() {
-        var level = level as ServerLevel
-        var ship = otherPos?.let { level.getShipManagingPos(it) }
-        var popoff = MotorTopPopoff()
-        popoff.forceVec = otherPos?.let { level.getBlockState(it).getValue(BlockStateProperties.FACING).normal.toJOMLD() }?.mul(100.0)
-
-        destroyConstraints()
-
-        ship?.saveAttachment(MotorTopPopoff::class.java, popoff)
-    }
-
     fun makeOrGetTop(level: ServerLevel, pos: BlockPos) {
+        if (level.isClientSide) return
+
         val lookingTowards = blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD()
 
         val ship = level.getShipObjectManagingPos(blockPos)
@@ -225,6 +202,13 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
 
         this.otherPos = otherAttachmentPoint
         createConstraints(otherShip)
+        if (otherShip is LoadedServerShip) {
+            otherShip.let {
+                val control = MotorControl()
+                control.controlData = controlData
+                it.setAttachment(MotorControl::class.java, control)
+            }
+        }
     }
 
     fun createConstraints(otherShip: ServerShip? = null): Boolean {
@@ -247,11 +231,11 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
             else
                 Quaterniond(AxisAngle4d(lookingTowards.angle(x), xCross.normalize()))
 
-            val motorConstraint = otherShip?.transform?.let {
+            /*val motorConstraint = otherShip?.transform?.let {
                 VSHingeTargetAngleConstraint(
                         shipId, otherShipId, constraintComplience, hingeOrientation, hingeOrientation, maxForce, currentAngle, currentAngle
                 )
-            }
+            }*/
 
             val hingeConstraint = VSHingeOrientationConstraint(
                     shipId, otherShipId, constraintComplience, hingeOrientation, hingeOrientation, maxForce
@@ -262,7 +246,7 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
                     maxForce, baseOffset
             )
 
-            motorId = motorConstraint?.let { level.shipObjectWorld.createNewConstraint(it) }
+            //motorId = motorConstraint?.let { level.shipObjectWorld.createNewConstraint(it) }
             shipIds = listOf(shipId, otherShipId)
             hingeId = level.shipObjectWorld.createNewConstraint(hingeConstraint)
             attachmentConstraintId = level.shipObjectWorld.createNewConstraint(attachmentConstraint)
@@ -274,17 +258,36 @@ class MotorBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(ComputerC
     }
 
     fun destroyConstraints() {
-        if (level?.shipObjectWorld != null && !level!!.isClientSide) {
+        if (!level!!.isClientSide) {
             val level = level as ServerLevel
-            motorId?.let { level.shipObjectWorld.removeConstraint(it) }
+
+            val otherShipId = shipIds?.get(1)
+            val otherShip = otherShipId?.let { level.shipObjectWorld.loadedShips.getById(it) }
+            if (otherShip != null) {
+                otherShip.getAttachment(MotorControl::class.java)?.controlData = null
+            }
+
             shipIds = null
             currentAngle = 0.0
             hingeId?.let { level.shipObjectWorld.removeConstraint(it) }
+            //hingeId = null
             attachmentConstraintId?.let { level.shipObjectWorld.removeConstraint(it) }
+            //attachmentConstraintId = null
             otherPos = null
 
             this.setChanged()
         }
+    }
+
+    private fun generateData(state : BlockState) : MotorControlData {
+        return MotorControlData(
+                activated,
+                reversed,
+                state.getValue(BlockStateProperties.FACING),
+                2.0,
+                null,
+                level!!.getShipManagingPos(blockPos) == null
+        )
     }
 
     private fun basePoint(): Vector3d = blockPos.toJOMLD()

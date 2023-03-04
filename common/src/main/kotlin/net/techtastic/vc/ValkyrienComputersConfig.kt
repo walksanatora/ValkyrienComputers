@@ -37,7 +37,8 @@ object ValkyrienComputersConfig {
                 @JsonSchema(description = "Maximum Range of Radars")
                 val maxRadarRadius = 256
 
-                val radarGetsName = true
+                val radarGetsName = false
+                val radarGetsId = true
                 val radarGetsPosition = true
                 val radarGetsMass = true
                 val radarGetsRotation = false

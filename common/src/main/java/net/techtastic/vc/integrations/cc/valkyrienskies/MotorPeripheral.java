@@ -54,7 +54,7 @@ public class MotorPeripheral implements IPeripheral {
 		if (motor.getHingeId() == null) return false;
 
 		doesMotorStillExist();
-		motor.popOffTop();
+		motor.destroyConstraints();
 		return true;
 	}
 
@@ -65,6 +65,14 @@ public class MotorPeripheral implements IPeripheral {
 		doesMotorStillExist();
 		motor.makeOrGetTop((ServerLevel) level, pos);
 		return true;
+	}
+
+	@LuaFunction
+	public final boolean hasHead() throws LuaException {
+		if (level.isClientSide()) return false;
+
+		doesMotorStillExist();
+		return motor.getAttachmentConstraintId() != null && motor.getHingeId() != null;
 	}
 
 	@LuaFunction

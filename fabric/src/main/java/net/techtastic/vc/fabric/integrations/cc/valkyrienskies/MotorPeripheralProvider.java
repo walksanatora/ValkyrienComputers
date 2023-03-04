@@ -4,6 +4,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.techtastic.vc.blockentity.MotorBlockEntity;
 import net.techtastic.vc.integrations.cc.valkyrienskies.MotorPeripheral;

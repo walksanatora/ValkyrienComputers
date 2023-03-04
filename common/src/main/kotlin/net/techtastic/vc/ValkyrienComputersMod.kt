@@ -1,6 +1,5 @@
 package net.techtastic.vc
 
-import dan200.computercraft.api.ComputerCraftAPI
 import net.minecraft.resources.ResourceLocation
 import org.valkyrienskies.core.impl.config.VSConfigClass
 
@@ -12,6 +11,7 @@ object ValkyrienComputersMod {
         ValkyrienComputersBlocks.register()
         ValkyrienComputersBlockEntities.register()
         ValkyrienComputersItems.register()
+        ValkyrienComputerWeights.register()
         VSConfigClass.registerConfig("vc", ValkyrienComputersConfig::class.java)
     }
 

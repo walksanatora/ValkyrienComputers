@@ -18,8 +18,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.techtastic.vc.blockentity.MotorBlockEntity
+import net.techtastic.vc.ship.MotorBaseControl
 import net.techtastic.vc.util.DirectionalShape
 import net.techtastic.vc.util.RotShapes
+import org.valkyrienskies.mod.common.getShipManagingPos
+import java.util.concurrent.ConcurrentHashMap
 
 class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
     val MOTOR_BASE = RotShapes.or(
@@ -54,6 +57,12 @@ class MotorBaseBlock(properties: Properties) : BaseEntityBlock(properties) {
         if (level is ServerLevel) {
             val be = level.getBlockEntity(pos) as MotorBlockEntity
             be.destroyConstraints()
+
+            val ship = level.getShipManagingPos(pos)
+            if (ship != null) {
+                val baseControl = ship.getAttachment(MotorBaseControl::class.java)
+                baseControl?.motorsMap?.remove(pos)
+            }
         }
 
         super.onRemove(state, level, pos, newState, isMoving)

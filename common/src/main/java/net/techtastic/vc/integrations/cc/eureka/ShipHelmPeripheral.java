@@ -1,5 +1,6 @@
 package net.techtastic.vc.integrations.cc.eureka;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -8,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.techtastic.vc.ship.ApplyThrust;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.valkyrienskies.core.api.ships.ServerShip;
@@ -19,10 +19,11 @@ import org.valkyrienskies.mod.api.SeatedControllingPlayer;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ShipHelmPeripheral implements IPeripheral {
-    private Level world;
-    private BlockPos pos;
+    private final Level world;
+    private final BlockPos pos;
 
     public ShipHelmPeripheral(Level level, BlockPos blockPos) {
         this.world = level;
@@ -44,295 +45,219 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean impulseForward(int ticks) throws LuaException {
-        return applyThrust("forward", ticks);
+    public final void move(IArguments arg) throws LuaException {
+        Optional<String> direction = arg.optString(0);
+        boolean bool = arg.optBoolean(0, false);
+
+        if (direction.isEmpty()) throw new LuaException("missing direction");
+
+        if (world.isClientSide) return;
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
+            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+        }
+
+
+        switch (direction.get()) {
+            case "forward" -> fakePlayer.setForwardImpulse(bool ? 1.0f : 0.0f);
+            case "back" -> fakePlayer.setForwardImpulse(bool ? -1.0f : 0.0f);
+            case "left" -> fakePlayer.setLeftImpulse(bool ? 1.0f : 0.0f);
+            case "right" -> fakePlayer.setLeftImpulse(bool ? -1.0f : 0.0f);
+            case "up" -> fakePlayer.setUpImpulse(bool ? 1.0f : 0.0f);
+            case "down" -> fakePlayer.setUpImpulse(bool ? -1.0f : 0.0f);
+            default -> throw new LuaException("invalid direction");
+        }
     }
 
     @LuaFunction
-    public final boolean impulseLeft(int ticks) throws LuaException {
-        return applyThrust("left", ticks);
-    }
+    public final void resetAllMovement() throws LuaException {
+        if (world.isClientSide) return;
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-    @LuaFunction
-    public final boolean impulseRight(int ticks) throws LuaException {
-        return applyThrust("right", ticks);
-    }
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
+            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+        }
 
-    @LuaFunction
-    public final boolean impulseBack(int ticks) throws LuaException {
-        return applyThrust("back", ticks);
-    }
-
-    @LuaFunction
-    public final boolean impulseUp(int ticks) throws LuaException {
-        return applyThrust("up", ticks);
-    }
-
-    @LuaFunction
-    public final boolean impulseDown(int ticks) throws LuaException {
-        return applyThrust("down", ticks);
+        fakePlayer.setForwardImpulse(0.0f);
+        fakePlayer.setLeftImpulse(0.0f);
+        fakePlayer.setUpImpulse(0.0f);
     }
 
     @LuaFunction
     public final boolean isCruising() throws LuaException {
-        if (world.isClientSide()) {
-            ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-            if (ship != null) {
-                EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-                if (control != null) {
-                    SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
-                    return fakePlayer != null && fakePlayer.getCruise();
-                } else {
-                    throw new LuaException("not Eureka ship");
-                }
-            } else {
-                throw new LuaException("no ship");
-            }
-        }
-        return false;
+        if (world.isClientSide) return false;
+        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        return fakePlayer != null && fakePlayer.getCruise();
     }
 
     @LuaFunction
     public final boolean startCruising() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
-                if (fakePlayer == null) {
-                    fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
-                }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-                fakePlayer.setCruise(true);
-                ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
-
-                return true;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
         }
+
+        fakePlayer.setCruise(true);
+        ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+
+        return true;
     }
 
     @LuaFunction
     public final boolean stopCruising() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
-                if (fakePlayer == null) {
-                    fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
-                }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-                fakePlayer.setCruise(false);
-                ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
-
-                return true;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
         }
+
+        fakePlayer.setCruise(false);
+        ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+
+        return true;
     }
 
     @LuaFunction
     public final boolean startAlignment() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                control.setAligning(true);
-                ship.saveAttachment(EurekaShipControl.class, control);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-                return true;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        control.setAligning(true);
+        ship.saveAttachment(EurekaShipControl.class, control);
+
+        return true;
     }
 
     @LuaFunction
     public final boolean stopAlignment() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                control.setAligning(false);
-                ship.saveAttachment(EurekaShipControl.class, control);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-                return true;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        control.setAligning(false);
+        ship.saveAttachment(EurekaShipControl.class, control);
+
+        return true;
     }
 
     @LuaFunction
     public final boolean disassemble() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                BlockEntity be = world.getBlockEntity(pos);
-                if (be instanceof ShipHelmBlockEntity) {
-                    ShipHelmBlockEntity helm = (ShipHelmBlockEntity) be;
-                    helm.disassemble();
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-                    return true;
-                } else {
-                    throw new LuaException("no ship helm");
-                }
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof ShipHelmBlockEntity helm) {
+            helm.disassemble();
+
+            return true;
         } else {
-            throw new LuaException("no ship");
+            throw new LuaException("no ship helm");
         }
     }
 
     @LuaFunction
     public final boolean assemble() throws LuaException {
         if (world.isClientSide()) return false;
-
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship == null) {
-            BlockEntity be = world.getBlockEntity(pos);
-            if (be instanceof ShipHelmBlockEntity) {
-                ShipHelmBlockEntity helm = (ShipHelmBlockEntity) be;
-                helm.assemble();
+        if (ship != null) throw new LuaException("already assembled");
 
-                return true;
-            } else {
-                throw new LuaException("no ship helm");
-            }
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof ShipHelmBlockEntity helm) {
+            helm.assemble();
+
+            return true;
         } else {
-            throw new LuaException("already assembled");
+            throw new LuaException("no ship helm");
         }
     }
 
     @LuaFunction
     public final int getBalloonAmount() throws LuaException {
-        if (world.isClientSide()) return 0;
-
+        if (world.isClientSide) return 0;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                return control.getBalloons();
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        return control.getBalloons();
     }
 
     @LuaFunction
     public final int getAnchorAmount() throws LuaException {
-        if (world.isClientSide()) return 0;
+        if (world.isClientSide) return 0;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                return control.getAnchors();
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        return control.getAnchors();
     }
 
     @LuaFunction
     public final int getActiveAnchorAmount() throws LuaException {
-        if (world.isClientSide()) return 0;
-
+        if (world.isClientSide) return 0;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                return control.getAnchorsActive();
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        return  control.getAnchorsActive();
     }
 
     @LuaFunction
     public final boolean areAnchorsActive() throws LuaException {
-        if (world.isClientSide()) return false;
-
+        if (world.isClientSide) return false;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                return control.getAnchorsActive() > 0;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        return control.getAnchorsActive() > 0;
     }
 
     @LuaFunction
     public final int getShipHelmAmount() throws LuaException {
-        if (world.isClientSide()) return 0;
-
+        if (world.isClientSide) return 0;
         ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) {
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) {
-                return control.getHelms();
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        return control.getHelms();
     }
-
-    public boolean applyThrust(String direction, int gameTicks) throws LuaException {
-        if (world.isClientSide()) return false;
-
-        ServerShip ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
-        if (ship != null) { //Is The Peripheral on a Ship?
-            EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
-            if (control != null) { //Is the Ship being controlled by Eureka?
-                ApplyThrust at = ship.getAttachment(ApplyThrust.class);
-                if (at == null) at = new ApplyThrust();
-
-                at.set(world, pos, direction, gameTicks);
-
-                ship.saveAttachment(ApplyThrust.class, at);
-
-                return true;
-            } else {
-                throw new LuaException("not Eureka ship");
-            }
-        } else {
-            throw new LuaException("no ship");
-        }
-    }
-
-
 }

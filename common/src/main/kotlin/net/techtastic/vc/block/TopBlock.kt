@@ -48,7 +48,7 @@ class TopBlock(properties: Properties) : Block(properties) {
         if (!level.isClientSide()) {
             val level = level as ServerLevel
 
-            var bePos = pos.relative(state.getValue(BlockStateProperties.FACING))
+            var bePos = pos.relative(state.getValue(BlockStateProperties.FACING).opposite)
             val initialShip = level.getShipManagingPos(bePos)
             if (initialShip != null) {
                 val vec = initialShip.transform.shipToWorld.transformPosition(bePos.x.toDouble(), bePos.y.toDouble(), bePos.z.toDouble(), Vector3d())

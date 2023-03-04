@@ -17,9 +17,6 @@ import net.techtastic.vc.registry.RegistrySupplier
 object ValkyrienComputersBlockEntities {
     private val BLOCKENTITIES = DeferredRegister.create(ValkyrienComputersMod.MOD_ID, Registry.BLOCK_ENTITY_TYPE_REGISTRY)
 
-    //val FARTER = ValkyrienComputersBlocks.FARTER withBE ::FartBlockEntity byName "farter"
-    //val BEARING = ValkyrienComputersBlocks.BEARING withBE ::BearingBlockEntity byName "bearing"
-
     fun register() {
         if (Platform.isModLoaded("computercraft")) ComputerCraftBlockEntities.registerBlockEntities()
         BLOCKENTITIES.applyAll()

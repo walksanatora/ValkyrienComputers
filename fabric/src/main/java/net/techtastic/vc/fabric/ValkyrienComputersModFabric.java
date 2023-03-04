@@ -43,23 +43,6 @@ public class ValkyrienComputersModFabric implements ModInitializer {
         @Override
         public void onInitializeClient() {
             ValkyrienComputersMod.initClient();
-//            BlockEntityRendererRegistry.INSTANCE.register(
-//                    ValkyrienComputersBlockEntities.INSTANCE.getSHIP_HELM().get(),
-//                    ShipHelmBlockEntityRenderer::new
-//            );
-
-//            ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> {
-//                for (WoodType woodType : WoodType.values()) {
-//                    out.accept(new ResourceLocation(ValkyrienComputersMod.MOD_ID, "block/" + woodType.getResourceName() + "_ship_helm_wheel"));
-//                }
-//            });
-//
-//            WheelModels.INSTANCE.setModelGetter(woodType ->
-//                    Minecraft.getInstance().getModelManager().getModel(
-//                            new ModelResourceLocation(
-//                                    new ResourceLocation(ValkyrienComputersMod.MOD_ID, "ship_helm_wheel"),
-//                                    "wood=" + woodType.getResourceName()
-//                            )));
         }
     }
 
