@@ -35,6 +35,7 @@ object ValkyrienComputersConfig {
                 val maxRadarRadius = 256
 
                 val radarGetsName = true
+                val radarGetsId = true
                 val radarGetsPosition = true
                 val radarGetsMass = true
                 val radarGetsRotation = false
