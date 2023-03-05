@@ -1,5 +1,6 @@
 package net.techtastic.vc.cc.eureka;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -16,6 +17,8 @@ import org.valkyrienskies.eureka.blockentity.ShipHelmBlockEntity;
 import org.valkyrienskies.eureka.ship.EurekaShipControl;
 import org.valkyrienskies.mod.api.SeatedControllingPlayer;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
+
+import java.util.Optional;
 
 public class ShipHelmPeripheral implements IPeripheral {
     private Level world;
@@ -41,33 +44,53 @@ public class ShipHelmPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final boolean impulseForward(int ticks) throws LuaException {
-        return applyThrust("forward", ticks);
+    public final void move(IArguments arg) throws LuaException {
+        Optional<String> direction = arg.optString(0);
+        boolean bool = arg.optBoolean(0, false);
+
+        if (!direction.isPresent()) throw new LuaException("missing direction");
+
+        if (world.isClientSide) return;
+        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
+
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
+            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+        }
+
+
+        switch (direction.get()) {
+            case "forward": fakePlayer.setForwardImpulse(bool ? 1.0f : 0.0f); break;
+            case "back": fakePlayer.setForwardImpulse(bool ? -1.0f : 0.0f); break;
+            case "left": fakePlayer.setLeftImpulse(bool ? 1.0f : 0.0f); break;
+            case "right": fakePlayer.setLeftImpulse(bool ? -1.0f : 0.0f); break;
+            case "up": fakePlayer.setUpImpulse(bool ? 1.0f : 0.0f); break;
+            case "down": fakePlayer.setUpImpulse(bool ? -1.0f : 0.0f); break;
+            default: throw new LuaException("invalid direction");
+        }
     }
 
     @LuaFunction
-    public final boolean impulseLeft(int ticks) throws LuaException {
-        return applyThrust("left", ticks);
-    }
+    public final void resetAllMovement() throws LuaException {
+        if (world.isClientSide) return;
+        ShipData ship = VSGameUtilsKt.getShipManagingPos((ServerLevel) world, pos);
+        if (ship == null) throw new LuaException("no ship");
+        EurekaShipControl control = ship.getAttachment(EurekaShipControl.class);
+        if (control == null) throw new LuaException("not Eureka ship");
 
-    @LuaFunction
-    public final boolean impulseRight(int ticks) throws LuaException {
-        return applyThrust("right", ticks);
-    }
+        SeatedControllingPlayer fakePlayer = ship.getAttachment(SeatedControllingPlayer.class);
+        if (fakePlayer == null) {
+            fakePlayer = new SeatedControllingPlayer(world.getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite());
+            ship.saveAttachment(SeatedControllingPlayer.class, fakePlayer);
+        }
 
-    @LuaFunction
-    public final boolean impulseBack(int ticks) throws LuaException {
-        return applyThrust("back", ticks);
-    }
-
-    @LuaFunction
-    public final boolean impulseUp(int ticks) throws LuaException {
-        return applyThrust("up", ticks);
-    }
-
-    @LuaFunction
-    public final boolean impulseDown(int ticks) throws LuaException {
-        return applyThrust("down", ticks);
+        fakePlayer.setForwardImpulse(0.0f);
+        fakePlayer.setLeftImpulse(0.0f);
+        fakePlayer.setUpImpulse(0.0f);
     }
 
     @LuaFunction
