@@ -47,7 +47,7 @@ public class ShipHelmPeripheral implements IPeripheral {
     @LuaFunction
     public final void move(IArguments arg) throws LuaException {
         Optional<String> direction = arg.optString(0);
-        boolean bool = arg.optBoolean(0, false);
+        boolean bool = arg.optBoolean(1, false);
 
         if (direction.isEmpty()) throw new LuaException("missing direction");
 
